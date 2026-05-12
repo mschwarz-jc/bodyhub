@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buchung bestätigt – BodyHub</title>
+  <style>
+    @font-face {
+      font-family: 'Non Bureau';
+      font-weight: normal;
+      src: url('https://bodyhub.de/wp-content/uploads/2025/12/NonBureau-Regular.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Non Bureau';
+      font-weight: 500;
+      src: url('https://bodyhub.de/wp-content/uploads/2025/12/NonBureau-Medium.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Georgia Pro';
+      font-style: italic;
+      font-weight: 300;
+      src: url('https://bodyhub.de/wp-content/uploads/2025/12/GeorgiaPro-LightItalic.woff2') format('woff2');
+    }
+
+    :root {
+      --dark:    #1B1714;
+      --text:    #3C352C;
+      --muted:   #AA9D8C;
+      --green:   #27C480;
+      --bg:      #F5F1EC;
+      --beige:   #B99F83;
+      --white:   #FFFFFF;
+      --border:  #D6D6D6;
+      --card-bg: #EDE8E1;
+      --max-w:   1160px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Non Bureau', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    .georgia { font-family: 'Georgia Pro', Georgia, serif; font-style: italic; font-weight: 300; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    /* NAV */
+    .nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    .nav__inner {
+      display: flex; align-items: center;
+      justify-content: center;
+    }
+    .nav__logo { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+    .nav__logo span { color: var(--green); }
+
+    /* PROGRESS */
+    .progress {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+    .progress__inner {
+      display: flex; align-items: center; justify-content: center;
+    }
+    .progress__step {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.88rem; font-weight: 600; color: var(--muted);
+    }
+    .progress__step.is-done { color: var(--green); }
+    .progress__num {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700;
+    }
+    .progress__step.is-done .progress__num {
+      background: var(--green); border-color: var(--green); color: var(--dark);
+    }
+    .progress__connector { width: 60px; height: 2px; background: var(--green); margin: 0 12px; }
+
+    /* HERO CONFIRMATION */
+    .confirm-hero {
+      padding: 64px 0 0;
+      text-align: center;
+    }
+    .confirm-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 32px rgba(39,196,128,0.3);
+    }
+    .confirm-hero h1 {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700; line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .confirm-hero p {
+      color: var(--muted); font-size: 1rem;
+      max-width: 480px; margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    /* BOOKING SUMMARY PILL */
+    .summary-strip {
+      display: inline-flex; align-items: center; gap: 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      overflow: hidden;
+      margin: 0 auto 64px;
+    }
+    .summary-item {
+      display: flex; flex-direction: column;
+      padding: 14px 28px;
+      border-right: 1px solid var(--border);
+    }
+    .summary-item:last-child { border-right: none; }
+    .summary-item__label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 2px;
+    }
+    .summary-item__value {
+      font-size: 0.9rem; font-weight: 700; color: var(--text);
+    }
+
+    /* NEXT STEPS */
+    .next-steps {
+      padding: 0 0 72px;
+    }
+    .next-steps__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* VIDEO */
+    .video-placeholder {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, var(--card-bg) 0%, #C8B8A4 100%);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+    .video-placeholder__label {
+      position: absolute; top: 16px; left: 16px;
+      background: rgba(27,23,20,0.6);
+      color: rgba(255,255,255,0.9);
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .video-placeholder__center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+    }
+    .play-btn {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 32px rgba(27,23,20,0.2);
+      transition: transform 0.2s;
+    }
+    .video-placeholder:hover .play-btn { transform: scale(1.08); }
+    .play-btn svg { margin-left: 4px; }
+    .video-placeholder__caption {
+      font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.9);
+      text-shadow: 0 1px 4px rgba(27,23,20,0.4);
+    }
+    .video-placeholder__duration {
+      position: absolute; bottom: 14px; right: 16px;
+      background: rgba(27,23,20,0.6); color: rgba(255,255,255,0.9);
+      font-size: 0.75rem; font-weight: 600;
+      padding: 3px 9px; border-radius: 6px;
+    }
+
+    /* WHAT HAPPENS NEXT */
+    .steps-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .steps-card__title {
+      font-size: 1.1rem; font-weight: 700;
+    }
+    .step-item {
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; color: var(--text);
+      flex-shrink: 0;
+    }
+    .step-item.is-done .step-num {
+      background: var(--green); border-color: var(--green); color: var(--dark);
+    }
+    .step-item__title {
+      font-size: 0.95rem; font-weight: 700; margin-bottom: 3px;
+    }
+    .step-item__desc {
+      font-size: 0.85rem; color: var(--muted); line-height: 1.55;
+    }
+    .step-item.is-active .step-item__title { color: var(--text); }
+    .step-item:not(.is-done):not(.is-active) .step-item__title { color: var(--muted); }
+
+    /* DATE DISPLAY */
+    .date-highlight {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(39,196,128,0.1);
+      border: 1px solid rgba(39,196,128,0.3);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.9rem; font-weight: 700;
+      color: var(--text);
+      margin-top: 6px;
+    }
+    .date-highlight svg { color: var(--green); flex-shrink: 0; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .next-steps__grid { grid-template-columns: 1fr; }
+      .summary-strip { flex-direction: column; border-radius: 16px; }
+      .summary-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .summary-item:last-child { border-bottom: none; }
+      .progress__connector { width: 32px; }
+    }
+    @media (max-width: 600px) {
+      .progress__step span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="container">
+      <div class="nav__inner">
+        <a href="bodyhub-landingpage.html" class="nav__logo">body<span>hub</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Progress (alle done) -->
+  <div class="progress">
+    <div class="container">
+      <div class="progress__inner">
+        <div class="progress__step is-done">
+          <div class="progress__num">✓</div>
+          <span>Standort</span>
+        </div>
+        <div class="progress__connector"></div>
+        <div class="progress__step is-done">
+          <div class="progress__num">✓</div>
+          <span>Paket wählen</span>
+        </div>
+        <div class="progress__connector"></div>
+        <div class="progress__step is-done">
+          <div class="progress__num">✓</div>
+          <span>Starttermin</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Hero -->
+  <div class="confirm-hero">
+    <div class="container">
+      <div class="confirm-icon">
+        <svg width="28" height="21" viewBox="0 0 28 21" fill="none">
+          <path d="M2 10L10 19L26 2" stroke="#1B1714" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>Alles bereit – <span class="georgia">wir freuen uns auf dich!</span></h1>
+      <p>[Platzhalter: z.B. "Deine Buchung ist eingegangen. Dein Starttermin wurde gewählt – du erhältst in Kürze eine Bestätigung per E-Mail."]</p>
+
+      <!-- Booking summary pill -->
+      <div class="summary-strip">
+        <div class="summary-item">
+          <span class="summary-item__label">Standort</span>
+          <span class="summary-item__value">[Standort Platzhalter]</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-item__label">Paket</span>
+          <span class="summary-item__value">[Paket Platzhalter]</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-item__label">Starttermin</span>
+          <span class="summary-item__value">[Datum Platzhalter]</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-item__label">Uhrzeit</span>
+          <span class="summary-item__value">[Uhrzeit Platzhalter]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next steps + Video -->
+  <section class="next-steps">
+    <div class="container">
+      <div class="next-steps__grid">
+
+        <!-- Video Placeholder -->
+        <div class="video-placeholder">
+          <div class="video-placeholder__label">Video Platzhalter</div>
+          <div class="video-placeholder__center">
+            <div class="play-btn">
+              <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+                <path d="M2 2L20 13L2 24V2Z" fill="#1B1714" stroke="#1B1714" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="video-placeholder__caption">[Willkommensvideo – Titel Platzhalter]</span>
+          </div>
+          <div class="video-placeholder__duration">[x:xx]</div>
+        </div>
+
+        <!-- What happens next -->
+        <div class="steps-card">
+          <div class="steps-card__title">Was passiert als nächstes?</div>
+
+          <div class="step-item is-done">
+            <div class="step-num">✓</div>
+            <div>
+              <div class="step-item__title">Standort & Paket gewählt</div>
+              <div class="step-item__desc">[Platzhalter: Dein gewähltes Paket und dein Standort sind gespeichert.]</div>
+            </div>
+          </div>
+
+          <div class="step-item is-done">
+            <div class="step-num">✓</div>
+            <div>
+              <div class="step-item__title">Starttermin gebucht</div>
+              <div class="step-item__desc">[Platzhalter: Dein erster Termin ist vorgemerkt.]
+                <div class="date-highlight">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="2" stroke="#27C480" stroke-width="1.4"/><path d="M5 1v2M11 1v2M1 6h14" stroke="#27C480" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  [Datum] · [Uhrzeit] · [Standort]
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item is-active">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-item__title">Bestätigung per E-Mail</div>
+              <div class="step-item__desc">[Platzhalter: Du erhältst innerhalb von [X Stunden] eine Bestätigungs-E-Mail mit allen Details zu deiner Buchung und deinem Starttermin.]</div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>
+              <div class="step-item__title">Einfach erscheinen & loslegen</div>
+              <div class="step-item__desc">[Platzhalter: Komm entspannt zum Termin – wir kümmern uns um den Rest. Keine Vorbereitung nötig.]</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Info-Seiten Hinweis -->
+  <section class="info-hint-section" style="background:var(--bg);padding:60px 0;text-align:center;">
+    <div class="container">
+      <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:12px;color:var(--text);">Möchtest du mehr über unsere Behandlungen erfahren?</h3>
+      <p style="color:var(--muted);margin-bottom:32px;">Falls du noch Interesse an unseren Leistungen hast, findest du hier alle Informationen:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+        <a href="https://bodyhub.de/beckenboden/" style="display:inline-block;padding:12px 24px;border-radius:50px;border:1px solid var(--beige);background:white;color:var(--text);font-size:0.9rem;font-weight:500;text-decoration:none;">Beckenboden / Pelvipower</a>
+        <a href="https://bodyhub.de/empulse/" style="display:inline-block;padding:12px 24px;border-radius:50px;border:1px solid var(--beige);background:white;color:var(--text);font-size:0.9rem;font-weight:500;text-decoration:none;">EMPulse</a>
+        <a href="https://bodyhub.de/relounge/" style="display:inline-block;padding:12px 24px;border-radius:50px;border:1px solid var(--beige);background:white;color:var(--text);font-size:0.9rem;font-weight:500;text-decoration:none;">Relounge</a>
+        <a href="https://bodyhub.de/ballancer/" style="display:inline-block;padding:12px 24px;border-radius:50px;border:1px solid var(--beige);background:white;color:var(--text);font-size:0.9rem;font-weight:500;text-decoration:none;">Ballancer</a>
+        <a href="https://bodyhub.de/dermiocare/" style="display:inline-block;padding:12px 24px;border-radius:50px;border:1px solid var(--beige);background:white;color:var(--text);font-size:0.9rem;font-weight:500;text-decoration:none;">DermioCare</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--dark);padding:32px 0;font-size:0.88rem;">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;">
+        <div style="font-size:1.2rem;font-weight:700;color:var(--white);">body<span style="color:var(--green);">hub</span></div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <a href="#" style="color:rgba(255,255,255,0.45);">Impressum</a>
+          <a href="#" style="color:rgba(255,255,255,0.45);">Datenschutz</a>
+          <a href="#" style="color:rgba(255,255,255,0.45);">AGB</a>
+        </div>
+        <p style="color:rgba(255,255,255,0.35);">© 2026 BodyHub. Alle Rechte vorbehalten.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
