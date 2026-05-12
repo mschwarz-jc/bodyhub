@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMP Pelvi – Beckenboden stärken | BodyHub</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <style>
+    @font-face { font-family: 'Non Bureau'; font-weight: normal; src: url('https://bodyhub.de/wp-content/uploads/2025/12/NonBureau-Regular.woff2') format('woff2'); }
+    @font-face { font-family: 'Non Bureau'; font-weight: 500; src: url('https://bodyhub.de/wp-content/uploads/2025/12/NonBureau-Medium.woff2') format('woff2'); }
+    @font-face { font-family: 'Georgia Pro'; font-style: italic; font-weight: 300; src: url('https://bodyhub.de/wp-content/uploads/2025/12/GeorgiaPro-LightItalic.woff2') format('woff2'); }
+    @font-face { font-family: 'Georgia Pro'; font-style: italic; font-weight: 400; src: url('https://bodyhub.de/wp-content/uploads/2025/12/GeorgiaPro-Italic.woff2') format('woff2'); }
+
+    :root {
+      --color-dark:    #1B1714;
+      --color-text:    #3C352C;
+      --color-muted:   #AA9D8C;
+      --color-green:   #27C480;
+      --color-bg:      #F5F1EC;
+      --color-white:   #FFFFFF;
+      --color-border:  #D6D6D6;
+      --color-card-bg: #EDE8E1;
+      --radius:        12px;
+      --radius-btn:    40px;
+      --max-w:         1160px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Non Bureau', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--color-bg); color: var(--color-text); font-size: 16px; line-height: 1.6; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    p { color: var(--color-text); }
+    .georgia { font-family: 'Georgia Pro', Georgia, serif; font-style: italic; font-weight: 300; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.015em; }
+
+    /* HEADER */
+    .site-header { position: sticky; top: 0; z-index: 100; }
+    .top-bar { background: #ffffff; border-bottom: 1px solid #D6D6D6; padding: 9px 0; }
+    .top-bar-inner { display: flex; align-items: center; justify-content: space-between; }
+    .top-bar-icons { display: flex; gap: 24px; align-items: center; }
+    .top-icon-box { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 500; color: #3C352C; }
+    @media (max-width: 900px) { .top-bar { display: none; } }
+    .main-header { background: #F5F1EC; border-bottom: 1px solid #D6D6D6; transition: background 0.3s, box-shadow 0.3s; }
+    .main-header.is-scrolled { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-bottom-color: transparent; }
+    .nav-inner { display: flex; align-items: center; height: 68px; }
+    .nav-logo { display: flex; align-items: center; margin-right: 40px; flex-shrink: 0; }
+    .nav-logo img { height: 48px; width: auto; display: block; }
+    .header-menu { flex: 1; }
+    .nav-items { display: flex; list-style: none; gap: 0; align-items: center; }
+    .nav-item > a { display: block; padding: 10px 16px; font-size: 0.92rem; font-weight: 500; color: #3C352C; white-space: nowrap; }
+    .nav-item > a:hover { color: #000; }
+    .nav-item-dropdown { position: relative; }
+    .nav-dropdown { display: none; position: absolute; top: calc(100% + 4px); left: 0; background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); padding: 8px 0; min-width: 180px; list-style: none; z-index: 200; }
+    .nav-item-dropdown:hover .nav-dropdown { display: block; }
+    .nav-dropdown-item { display: block; padding: 9px 20px; font-size: 0.88rem; color: #3C352C; }
+    .nav-dropdown-item:hover { background: #F5F1EC; }
+    .cta-header { display: inline-flex; align-items: center; gap: 10px; margin-left: auto; background: #27C480; color: #3C352C; font-weight: 600; font-size: 0.88rem; padding: 8px 8px 8px 18px; border-radius: 50px; white-space: nowrap; border: 2px solid white; flex-shrink: 0; }
+    .cta-header:hover { opacity: 0.88; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; margin-left: auto; color: #3C352C; }
+    .mobile-nav { display: none; flex-direction: column; background: white; border-top: 1px solid #D6D6D6; padding: 16px 0 24px; }
+    .mobile-nav.is-open { display: flex; }
+    .mobile-nav ul { list-style: none; padding: 0 24px; }
+    .mobile-nav ul li a { display: block; padding: 10px 0; font-size: 1rem; font-weight: 500; color: #3C352C; border-bottom: 1px solid #D6D6D6; }
+    .mobile-sub { padding-left: 12px !important; }
+    .mobile-sub li a { font-size: 0.9rem; font-weight: 400; color: #AA9D8C !important; border-bottom: none !important; }
+    @media (max-width: 900px) { .header-menu, .cta-header { display: none; } .hamburger { display: block; } }
+    @media (min-width: 901px) { .hamburger, .mobile-nav { display: none !important; } }
+
+    /* HERO */
+    .hero { background: var(--color-card-bg); overflow: hidden; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; min-height: 580px; align-items: stretch; }
+    .hero-img { background: #C8B8A4; overflow: hidden; }
+    .hero-img img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .hero-content { padding: 64px 56px 64px 48px; display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+    .hero-label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-muted); }
+    .hero-h1 { font-size: clamp(1.7rem, 2.8vw, 2.5rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.015em; color: var(--color-text); }
+    .hero-sub { font-size: 1rem; color: var(--color-text); line-height: 1.7; max-width: 440px; }
+    .hero-trust { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .hero-trust-text { font-size: 0.88rem; color: var(--color-muted); font-weight: 500; }
+    .btn-green {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 15px 30px 15px 24px;
+      background: var(--color-green); color: var(--color-dark);
+      border-radius: var(--radius-btn);
+      font-family: inherit; font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+      border: none;
+    }
+    .btn-green:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-center { text-align: center; }
+
+    /* PAIN POINTS */
+    .pain-section { background: var(--color-dark); padding: 80px 0; }
+    .pain-eyebrow { display: block; text-align: center; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 14px; }
+    .pain-section h2 { color: #fff; text-align: center; margin-bottom: 16px; }
+    .pain-intro { text-align: center; color: rgba(255,255,255,0.55); max-width: 520px; margin: 0 auto 48px; font-size: 0.97rem; }
+    .pain-list { list-style: none; max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    .pain-item { display: flex; align-items: flex-start; gap: 16px; background: rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 20px; border: 1px solid rgba(255,255,255,0.08); }
+    .pain-check { flex-shrink: 0; width: 22px; height: 22px; background: var(--color-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+    .pain-item p { color: rgba(255,255,255,0.82); font-size: 0.97rem; margin: 0; }
+
+    /* BENEFITS */
+    .benefits-section { background: var(--color-card-bg); padding: 80px 0; }
+    .benefits-eyebrow { display: block; text-align: center; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-green); margin-bottom: 14px; }
+    .benefits-section h2 { text-align: center; margin-bottom: 12px; }
+    .benefits-intro { text-align: center; color: var(--color-muted); max-width: 520px; margin: 0 auto 48px; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+    .benefit-card { background: #fff; border-radius: var(--radius); padding: 36px 28px; }
+    .benefit-icon { width: 48px; height: 48px; background: var(--color-green); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .benefit-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: var(--color-text); }
+    .benefit-card p { font-size: 0.93rem; color: var(--color-muted); line-height: 1.65; margin: 0; }
+
+    /* STEPS */
+    .steps-section { background: var(--color-bg); padding: 80px 0; }
+    .steps-eyebrow { display: block; text-align: center; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-green); margin-bottom: 14px; }
+    .steps-section h2 { text-align: center; margin-bottom: 12px; }
+    .steps-intro { text-align: center; color: var(--color-muted); max-width: 460px; margin: 0 auto 56px; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; position: relative; }
+    .steps-grid::before { content: ''; position: absolute; top: 26px; left: calc(16.6% + 26px); right: calc(16.6% + 26px); height: 2px; background: var(--color-border); }
+    .step-card { text-align: center; padding: 0 16px; }
+    .step-num { width: 52px; height: 52px; border-radius: 50%; background: var(--color-green); color: var(--color-dark); font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; position: relative; z-index: 1; }
+    .step-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .step-card p { font-size: 0.92rem; color: var(--color-muted); margin: 0; }
+
+    /* TESTIMONIALS */
+    .testimonials-section { background: var(--color-card-bg); padding: 80px 0; }
+    .testi-eyebrow { display: block; text-align: center; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-green); margin-bottom: 14px; }
+    .testimonials-section h2 { text-align: center; margin-bottom: 48px; }
+    .testimonial-slide { background: #fff; border-radius: 16px; padding: 40px 36px; }
+    .testi-stars { display: flex; gap: 4px; margin-bottom: 20px; }
+    .testimonial-quote { font-size: 1.05rem; color: var(--color-text); line-height: 1.72; margin-bottom: 24px; }
+    .testimonial-author { font-size: 0.9rem; font-weight: 700; color: var(--color-text); }
+    .testimonial-result { font-size: 0.82rem; color: var(--color-green); font-weight: 600; margin-top: 4px; }
+    .swiper-nav { display: flex; gap: 12px; justify-content: center; margin-top: 32px; }
+    .swiper-btn { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--color-border); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; }
+    .swiper-btn:hover { background: var(--color-green); border-color: var(--color-green); }
+
+    /* SCARCITY */
+    .scarcity-section { background: var(--color-dark); padding: 80px 0; text-align: center; }
+    .scarcity-eyebrow { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-green); margin-bottom: 14px; }
+    .scarcity-section h2 { color: #fff; margin-bottom: 16px; }
+    .scarcity-section p { color: rgba(255,255,255,0.58); max-width: 440px; margin: 0 auto 36px; }
+    .btn-green-lg {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 18px 36px 18px 28px;
+      background: var(--color-green); color: var(--color-dark);
+      border-radius: var(--radius-btn);
+      font-family: inherit; font-size: 1.05rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-green-lg:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* FAQ */
+    .faq-section { background: var(--color-bg); padding: 80px 0; }
+    .faq-section h2 { text-align: center; margin-bottom: 48px; }
+    .faq__list { max-width: 720px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--color-border); }
+    .faq-item summary { list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 20px 0; font-weight: 600; cursor: pointer; gap: 16px; font-size: 1rem; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-icon { width: 26px; height: 26px; border: 1.5px solid var(--color-text); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.25s; }
+    .faq-item[open] .faq-icon { transform: rotate(45deg); }
+    .faq-body { padding: 0 0 20px; color: var(--color-muted); font-size: 0.95rem; line-height: 1.7; margin: 0; }
+
+    /* FOOTER */
+    footer { background: var(--color-dark); color: rgba(255,255,255,0.5); padding: 40px 0; font-size: 0.88rem; }
+    .footer__inner { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .footer__logo { font-size: 1.2rem; font-weight: 700; color: #fff; }
+    .footer__logo span { color: var(--color-green); }
+    .footer__links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer__links a { color: rgba(255,255,255,0.5); transition: color 0.2s; }
+    .footer__links a:hover { color: #fff; }
+
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-img { height: 300px; }
+      .hero-content { padding: 40px 24px; }
+      .hero-sub { max-width: none; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; gap: 32px; }
+      .steps-grid::before { display: none; }
+      .footer__inner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="top-bar">
+      <div class="container">
+        <div class="top-bar-inner">
+          <img src="g-review-dark.svg" width="197" height="14" alt="Google Reviews">
+          <div class="top-bar-icons">
+            <span class="top-icon-box">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect width="14" height="14" rx="7" transform="matrix(-1 0 0 1 14 0)" fill="#27C480"></rect><path d="M3.84998 6.80909L6.07351 9.1L10.15 4.9" stroke="#1B1B1B" stroke-width="1.4" stroke-linejoin="bevel"></path></svg>
+              Probebehandlung buchen
+            </span>
+            <span class="top-icon-box">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.66667 0H4.66667V4.658H0V8.658H4.66667V13.316H8.66667V8.658H13.3333V4.658H8.66667V0Z" fill="#27C480"></path></svg>
+              Medizinisch geprüfte Technologie
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main-header">
+      <div class="container">
+        <div class="nav-inner">
+          <a href="bodyhub-landingpage.html" class="nav-logo">
+            <img src="https://bodyhub.de/wp-content/uploads/2025/12/brown-logo.svg" width="124" height="48" alt="BodyHub">
+          </a>
+          <nav class="header-menu">
+            <ul class="nav-items">
+              <li class="nav-item nav-item-dropdown">
+                <a href="#">Leistungen</a>
+                <ul class="nav-dropdown">
+                  <li><a href="https://bodyhub.de/empulse/" class="nav-dropdown-item">EMPulse</a></li>
+                  <li><a href="https://bodyhub.de/beckenboden/" class="nav-dropdown-item">Beckenboden</a></li>
+                  <li><a href="https://bodyhub.de/relounge/" class="nav-dropdown-item">Relounge</a></li>
+                  <li><a href="https://bodyhub.de/ballancer/" class="nav-dropdown-item">Ballancer</a></li>
+                  <li><a href="https://bodyhub.de/dermiocare/" class="nav-dropdown-item">DermioCare</a></li>
+                </ul>
+              </li>
+              <li class="nav-item"><a href="https://bodyhub.de/uber-uns/">Über Uns</a></li>
+              <li class="nav-item nav-item-dropdown">
+                <a href="#">Standorte</a>
+                <ul class="nav-dropdown">
+                  <li><a href="https://bodyhub.de/standort-pasing/" class="nav-dropdown-item">München Pasing</a></li>
+                </ul>
+              </li>
+              <li class="nav-item"><a href="https://bodyhub.de/kontakt/">Kontakt</a></li>
+            </ul>
+          </nav>
+          <a href="bodyhub-landingpage.html#produkte" class="cta-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="20" fill="white"></rect><path d="M11.9 20H28.1" stroke="#3C352C" stroke-width="1.62"></path><path d="M22.7001 14.6L28.1001 20L22.7001 25.4" stroke="#3C352C" stroke-width="1.62" stroke-linejoin="round"></path></svg>
+            Behandlungen entdecken
+          </a>
+          <button class="hamburger" onclick="document.getElementById('mobileNav').classList.toggle('is-open')" aria-label="Menü öffnen">
+            <svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"><path d="M104 333H896C929 333 958 304 958 271S929 208 896 208H104C71 208 42 237 42 271S71 333 104 333ZM104 583H896C929 583 958 554 958 521S929 458 896 458H104C71 458 42 487 42 521S71 583 104 583ZM104 833H896C929 833 958 804 958 771S929 708 896 708H104C71 708 42 737 42 771S71 833 104 833Z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <nav class="mobile-nav" id="mobileNav">
+      <ul>
+        <li><a href="#">Leistungen</a>
+          <ul class="mobile-sub">
+            <li><a href="https://bodyhub.de/empulse/">EMPulse</a></li>
+            <li><a href="https://bodyhub.de/beckenboden/">Beckenboden</a></li>
+            <li><a href="https://bodyhub.de/relounge/">Relounge</a></li>
+            <li><a href="https://bodyhub.de/ballancer/">Ballancer</a></li>
+            <li><a href="https://bodyhub.de/dermiocare/">DermioCare</a></li>
+          </ul>
+        </li>
+        <li><a href="https://bodyhub.de/uber-uns/">Über Uns</a></li>
+        <li><a href="#">Standorte</a>
+          <ul class="mobile-sub">
+            <li><a href="https://bodyhub.de/standort-pasing/">München Pasing</a></li>
+          </ul>
+        </li>
+        <li><a href="https://bodyhub.de/kontakt/">Kontakt</a></li>
+      </ul>
+      <a href="bodyhub-landingpage.html#produkte" class="cta-header" style="margin:16px 24px;display:inline-flex;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="20" fill="white"></rect><path d="M11.9 20H28.1" stroke="#3C352C" stroke-width="1.62"></path><path d="M22.7001 14.6L28.1001 20L22.7001 25.4" stroke="#3C352C" stroke-width="1.62" stroke-linejoin="round"></path></svg>
+        Behandlungen entdecken
+      </a>
+    </nav>
+  </header>
+
+  <!-- 1. HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-img">
+        <img src="https://bodyhub.de/wp-content/uploads/2026/01/Slider-5.png" alt="EMP Pelvi Beckenboden Behandlung">
+      </div>
+      <div class="hero-content">
+        <p class="hero-label">EMP Pelvi</p>
+        <h1 class="hero-h1">Beckenbodenschwäche, Inkontinenz oder Schmerzen?<br><span class="georgia">Das ändert sich jetzt.</span></h1>
+        <p class="hero-sub">EMP Pelvi trainiert deinen Beckenboden mit 11.000 Muskelkontraktionen in 28 Minuten – entspannt im Liegen, ohne Anstrengung.</p>
+        <div class="hero-trust">
+          <img src="g-review-dark.svg" width="160" height="12" alt="Google Reviews 4,9★">
+          <span class="hero-trust-text">Über 200 zufriedene Kundinnen</span>
+        </div>
+        <a href="bodyhub-paketwahl.html?behandlung=emp-pelvi" class="btn-green">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="20" fill="white"></rect><path d="M11.9 20H28.1" stroke="#3C352C" stroke-width="1.62"></path><path d="M22.7001 14.6L28.1001 20L22.7001 25.4" stroke="#3C352C" stroke-width="1.62" stroke-linejoin="round"></path></svg>
+          Jetzt Probebehandlung sichern
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. PAIN POINTS -->
+  <section class="pain-section">
+    <div class="container">
+      <span class="pain-eyebrow">Kommt dir das bekannt vor?</span>
+      <h2>Ist das das Richtige für dich?</h2>
+      <p class="pain-intro">Wenn du dich in einem oder mehreren dieser Punkte wiedererkennst, ist EMP Pelvi genau das, was du gesucht hast.</p>
+      <ul class="pain-list">
+        <li class="pain-item">
+          <span class="pain-check"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L3.8 7.5L10 1" stroke="#1B1714" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <p>Verlierst du beim Niesen, Husten oder Lachen unkontrolliert Urin?</p>
+        </li>
+        <li class="pain-item">
+          <span class="pain-check"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L3.8 7.5L10 1" stroke="#1B1714" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <p>Hast du das Gefühl, unten herum keine Kontrolle mehr zu haben?</p>
+        </li>
+        <li class="pain-item">
+          <span class="pain-check"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L3.8 7.5L10 1" stroke="#1B1714" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <p>Leidest du unter Rückenschmerzen oder Beckenbodenspannung?</p>
+        </li>
+        <li class="pain-item">
+          <span class="pain-check"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L3.8 7.5L10 1" stroke="#1B1714" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <p>Hat sich dein Beckenboden nach Schwangerschaft oder Geburt nicht erholt?</p>
+        </li>
+        <li class="pain-item">
+          <span class="pain-check"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L3.8 7.5L10 1" stroke="#1B1714" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <p>Vermeidest du Sport oder Sprünge aus Angst vor Missgeschicken?</p>
+        </li>
+        <li class="pain-item">
+          <span class="pain-check"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L3.8 7.5L10 1" stroke="#1B1714" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <p>Bist du schon lange auf der Suche nach einer echten Lösung?</p>
+        </li>
+        <li class="pain-item">
+          <span class="pain-check"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L3.8 7.5L10 1" stroke="#1B1714" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <p>Hast du Physiotherapie probiert – aber der Erfolg blieb aus?</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3. BENEFITS -->
+  <section class="benefits-section">
+    <div class="container">
+      <span class="benefits-eyebrow">Warum EMP Pelvi</span>
+      <h2>Was du mit jeder Sitzung gewinnst</h2>
+      <p class="benefits-intro">Drei Vorteile, die du nach deiner ersten Behandlung selbst spürst.</p>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Starker Beckenboden</h3>
+          <p>11.000 Kontraktionen pro Sitzung stärken gezielt die Tiefenmuskulatur – effektiver als jede manuelle Übung.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Entspannt &amp; passiv</h3>
+          <p>Du liegst, die Technologie arbeitet. Kein Schwitzen, kein Aufwand – einfach entspannen und genießen.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 4L12 14.01l-3-3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Spürbar ab der 1. Sitzung</h3>
+          <p>Viele Kundinnen berichten bereits nach dem ersten Termin von Verbesserungen. Echte Ergebnisse, kein Warten.</p>
+        </div>
+      </div>
+      <div class="btn-center">
+        <a href="bodyhub-paketwahl.html?behandlung=emp-pelvi" class="btn-green">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="20" fill="white"></rect><path d="M11.9 20H28.1" stroke="#3C352C" stroke-width="1.62"></path><path d="M22.7001 14.6L28.1001 20L22.7001 25.4" stroke="#3C352C" stroke-width="1.62" stroke-linejoin="round"></path></svg>
+          Probebehandlung buchen
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. SO EINFACH GEHT'S -->
+  <section class="steps-section">
+    <div class="container">
+      <span class="steps-eyebrow">In 3 Schritten zum Ziel</span>
+      <h2>So einfach geht's</h2>
+      <p class="steps-intro">Vom ersten Termin bis zum spürbaren Ergebnis – unkompliziert und entspannt.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>Probebehandlung sichern</h3>
+          <p>Wähle dein Paket und buche deinen ersten Termin – ganz einfach online in wenigen Minuten.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>Behandlung erleben</h3>
+          <p>28 Minuten entspannt im Liegen – die Technologie trainiert, du entspannst dich.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>Ergebnisse sehen</h3>
+          <p>Schon nach wenigen Sitzungen spürst du den Unterschied und wählst dein individuelles Paket.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. TESTIMONIALS -->
+  <section class="testimonials-section">
+    <div class="container">
+      <span class="testi-eyebrow">Kundenstimmen</span>
+      <h2>Was unsere Kundinnen sagen</h2>
+      <div class="swiper" id="empSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide testimonial-slide">
+            <div class="testi-stars">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <p class="testimonial-quote">„Bereits nach der 1. Sitzung habe ich Verbesserungen gespürt. Nach 10 Wochen MyPelvi bin ich so glücklich über meine Entscheidung."</p>
+            <div class="testimonial-author">Regina M.</div>
+            <div class="testimonial-result">Spürbare Verbesserung ab Sitzung 1</div>
+          </div>
+          <div class="swiper-slide testimonial-slide">
+            <div class="testi-stars">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <p class="testimonial-quote">„Ich bin so glücklich über meine Entscheidung. Was ich vorher für unmöglich hielt, ist jetzt meine neue Normalität."</p>
+            <div class="testimonial-author">Tamara S.</div>
+            <div class="testimonial-result">Neue Lebensqualität nach der Behandlung</div>
+          </div>
+          <div class="swiper-slide testimonial-slide">
+            <div class="testi-stars">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#27C480"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <p class="testimonial-quote">„Endlich eine Lösung, die wirklich funktioniert. Ich hätte nie gedacht, dass ich wieder Sport treiben kann – ohne Angst."</p>
+            <div class="testimonial-author">Monika R.</div>
+            <div class="testimonial-result">Wieder aktiv und beschwerdefrei</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-nav">
+        <button class="swiper-btn" id="empPrev" aria-label="Zurück">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 14L6 9l5-5" stroke="#3C352C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="swiper-btn" id="empNext" aria-label="Weiter">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 4l5 5-5 5" stroke="#3C352C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. SCARCITY CTA -->
+  <section class="scarcity-section">
+    <div class="container">
+      <span class="scarcity-eyebrow">Limitierte Plätze</span>
+      <h2>Nur noch wenige Probebehandlungen verfügbar</h2>
+      <p>Unsere Termine sind sehr gefragt. Sichere dir jetzt deinen Platz, bevor er vergeben ist.</p>
+      <a href="bodyhub-paketwahl.html?behandlung=emp-pelvi" class="btn-green-lg">
+        Jetzt Probebehandlung sichern
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="20" fill="rgba(0,0,0,0.15)"></rect><path d="M11.9 20H28.1" stroke="#1B1714" stroke-width="1.62"></path><path d="M22.7001 14.6L28.1001 20L22.7001 25.4" stroke="#1B1714" stroke-width="1.62" stroke-linejoin="round"></path></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- 7. FAQ -->
+  <section class="faq-section">
+    <div class="container">
+      <h2>Häufige Fragen</h2>
+      <div class="faq__list">
+        <details class="faq-item">
+          <summary>
+            Ist EMP Pelvi sicher?
+            <span class="faq-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1V9M1 5H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </summary>
+          <p class="faq-body">Ja. EMP Pelvi ist eine medizinisch geprüfte Technologie und CE-zertifiziert. Die Behandlung ist klinisch erprobt und wird weltweit in der medizinischen Praxis eingesetzt.</p>
+        </details>
+        <details class="faq-item">
+          <summary>
+            Wie viele Sitzungen brauche ich?
+            <span class="faq-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1V9M1 5H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </summary>
+          <p class="faq-body">Wir empfehlen je nach Ziel und Ausgangssituation 10–20 Sitzungen. Nach dem ersten Termin beraten wir dich individuell und stellen den optimalen Behandlungsplan zusammen.</p>
+        </details>
+        <details class="faq-item">
+          <summary>
+            Ist die Behandlung schmerzhaft?
+            <span class="faq-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1V9M1 5H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </summary>
+          <p class="faq-body">Nein. Du spürst ein angenehmes Kribbeln oder leichtes Ziehen – die meisten Kundinnen empfinden die Behandlung als entspannend. Keine Schmerzen, keine Ausfallzeiten.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer__inner">
+        <div class="footer__logo">body<span>hub</span></div>
+        <div class="footer__links">
+          <a href="#">Impressum</a>
+          <a href="#">Datenschutz</a>
+          <a href="#">AGB</a>
+          <a href="#">Kontakt</a>
+        </div>
+        <div>© 2026 BodyHub. Alle Rechte vorbehalten.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      new Swiper('#empSwiper', {
+        slidesPerView: 1,
+        spaceBetween: 24,
+        loop: true,
+        grabCursor: true,
+        navigation: { nextEl: '#empNext', prevEl: '#empPrev' },
+        breakpoints: { 900: { slidesPerView: 2 } },
+      });
+    });
+
+    window.addEventListener('scroll', function () {
+      var h = document.querySelector('.main-header');
+      if (h) h.classList.toggle('is-scrolled', window.scrollY > 10);
+    });
+  </script>
+
+</body>
+</html>
