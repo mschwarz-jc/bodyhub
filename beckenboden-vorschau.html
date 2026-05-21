@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beckenboden-Checkup – Vorschau</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; background: #DDDEDE; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* ── PREVIEW BAR ─────────────────────────────── */
+    .preview-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(18,18,18,0.96); backdrop-filter: blur(16px);
+      padding: 10px 24px; display: flex; align-items: center; justify-content: center; gap: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .pb-meta { font-size: 11px; color: #555; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; }
+    .pb-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.1); }
+    .toggle-wrap { display: flex; background: rgba(255,255,255,0.07); border-radius: 100px; padding: 3px; gap: 2px; }
+    .tog {
+      padding: 7px 22px; border-radius: 100px; border: none; cursor: pointer;
+      font-size: 13px; font-family: inherit; font-weight: 500;
+      color: #777; background: transparent; transition: all 0.25s;
+    }
+    .tog:hover { color: #bbb; }
+    .tog.on-w { background: #C4956A; color: #fff; }
+    .tog.on-m { background: #1E5F8E; color: #fff; }
+
+    /* ── LP CONTAINERS ───────────────────────────── */
+    .lp { margin-top: 49px; display: none; }
+    .lp.show { display: block; }
+
+    /* ── THEME VARIABLES ─────────────────────────── */
+    .w {
+      --bg: #FAFAF8; --bg2: #F5F0EA; --card: #FFFFFF;
+      --tx: #2A2520; --txl: #7A726B;
+      --ac: #C4956A; --ach: #B8845A; --acl: #F0E4D4; --acxl: #FAF5EE;
+      --sc: #7A9E8E; --scl: #E8F2EE;
+      --br: #E8E0D6; --sh: rgba(196,149,106,0.09); --shl: rgba(196,149,106,0.17);
+      --hbg: linear-gradient(135deg, #F5EDE2 0%, #EEE7D9 45%, #E5EEEA 100%);
+      --ring: rgba(196,149,106,0.18); --ringd: rgba(196,149,106,0.10);
+      background: var(--bg); color: var(--tx);
+    }
+    .m {
+      --bg: #F4F6F9; --bg2: #E8EFF5; --card: #FFFFFF;
+      --tx: #1A2535; --txl: #5A6A80;
+      --ac: #1E5F8E; --ach: #175380; --acl: #D4E8F5; --acxl: #EDF5FB;
+      --sc: #3D8B7A; --scl: #DFF0EC;
+      --br: #D4DCE8; --sh: rgba(30,95,142,0.08); --shl: rgba(30,95,142,0.15);
+      --hbg: linear-gradient(135deg, #E8EFF5 0%, #ECF2F9 45%, #DDF0EC 100%);
+      --ring: rgba(30,95,142,0.16); --ringd: rgba(30,95,142,0.08);
+      background: var(--bg); color: var(--tx);
+    }
+
+    /* ── HERO ────────────────────────────────────── */
+    .hero {
+      background: var(--hbg); min-height: 88vh;
+      display: flex; align-items: center; padding: 80px 24px 60px; overflow: hidden;
+    }
+    .hero-in {
+      max-width: 1100px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 440px; gap: 60px; align-items: center;
+    }
+    .h-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 16px; border-radius: 100px;
+      font-size: 12px; font-weight: 500; letter-spacing: 0.4px;
+      background: var(--acl); color: var(--ac); margin-bottom: 22px;
+    }
+    .h-badge::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .h1 {
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(34px, 5vw, 52px); font-weight: 500;
+      line-height: 1.14; letter-spacing: -0.5px; color: var(--tx); margin-bottom: 20px;
+    }
+    .h-sub {
+      font-size: clamp(15px, 1.8vw, 17px); line-height: 1.74;
+      color: var(--txl); margin-bottom: 34px; max-width: 460px;
+    }
+    .btn-p {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 30px; border-radius: 100px; border: none; cursor: pointer;
+      font-size: 15px; font-family: inherit; font-weight: 600;
+      background: var(--ac); color: #fff; transition: all 0.26s; letter-spacing: 0.1px;
+    }
+    .btn-p:hover { background: var(--ach); transform: translateY(-2px); box-shadow: 0 10px 28px var(--shl); }
+    .btn-p:focus-visible { outline: 3px solid var(--ac); outline-offset: 3px; }
+    .h-note { margin-top: 13px; font-size: 12.5px; color: var(--txl); }
+    .trust-pills { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 22px; }
+    .tpill {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 500; padding: 5px 13px;
+      border-radius: 100px; border: 1px solid var(--br); color: var(--txl);
+      background: rgba(255,255,255,0.55);
+    }
+
+    /* Hero orb */
+    .h-vis { display: flex; align-items: center; justify-content: center; }
+    .orb { position: relative; width: 340px; height: 340px; display: flex; align-items: center; justify-content: center; }
+    .orb-bg { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 40% 40%, var(--acl), transparent 68%); }
+    .orb-r { position: absolute; border-radius: 50%; border: 1px solid var(--ring); }
+    .or1 { width: 220px; height: 220px; }
+    .or2 { width: 288px; height: 288px; border-style: dashed; border-color: var(--ringd); }
+    .or3 { width: 340px; height: 340px; border-color: var(--ringd); opacity: 0.5; }
+    .orb-c {
+      position: relative; z-index: 1;
+      width: 88px; height: 88px; border-radius: 26px;
+      background: var(--card); display: flex; align-items: center; justify-content: center;
+      font-size: 40px; box-shadow: 0 12px 40px var(--shl), 0 2px 8px var(--sh);
+    }
+
+    /* ── SECTIONS ────────────────────────────────── */
+    .sec { padding: 88px 24px; }
+    .sec-in { max-width: 940px; margin: 0 auto; }
+    .slbl { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ac); margin-bottom: 14px; }
+    .sh2 { font-family: 'Lora', Georgia, serif; font-size: clamp(26px,4vw,40px); font-weight: 500; line-height: 1.2; color: var(--tx); margin-bottom: 16px; }
+    .sbody { font-size: 17px; line-height: 1.75; color: var(--txl); max-width: 560px; }
+
+    /* WHY */
+    .why-sec { background: var(--card); }
+    .why-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 26px; margin-top: 52px; }
+    .why-card {
+      padding: 30px 26px; border-radius: 20px;
+      background: var(--bg); border: 1px solid var(--br);
+      transition: box-shadow 0.24s, transform 0.24s;
+    }
+    .why-card:hover { box-shadow: 0 8px 28px var(--sh); transform: translateY(-3px); }
+    .w-ico { width: 50px; height: 50px; border-radius: 14px; background: var(--acl); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 18px; }
+    .why-card h3 { font-size: 16px; font-weight: 600; color: var(--tx); margin-bottom: 10px; }
+    .why-card p { font-size: 14px; line-height: 1.68; color: var(--txl); }
+
+    /* ── QUIZ PROGRESS BAR ───────────────────────── */
+    .qpb {
+      position: sticky; top: 49px; z-index: 500;
+      padding: 14px 24px; backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--br); display: none;
+    }
+    .w .qpb { background: rgba(250,250,248,0.91); }
+    .m .qpb { background: rgba(244,246,249,0.91); }
+    .qpb.on { display: block; }
+    .qpb-in { max-width: 640px; margin: 0 auto; }
+    .qpb-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--txl); margin-bottom: 8px; font-weight: 500; }
+    .qpb-track { height: 4px; border-radius: 100px; background: var(--br); overflow: hidden; }
+    .qpb-fill { height: 100%; border-radius: 100px; background: var(--ac); transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+    /* ── QUIZ ────────────────────────────────────── */
+    .quiz-sec { background: var(--bg); padding: 0 24px 88px; }
+    .quiz-hdr { text-align: center; padding: 68px 0 52px; max-width: 640px; margin: 0 auto; }
+    .quiz-hdr p { font-size: 14px; color: var(--txl); margin-top: 12px; }
+    .quiz-wrap { max-width: 620px; margin: 0 auto; }
+    .q-step { display: none; }
+    .q-step.on { display: block; animation: fadeUp 0.36s cubic-bezier(0.22,0.8,0.4,1); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .q-q { font-family: 'Lora', Georgia, serif; font-size: clamp(20px,3vw,27px); font-weight: 500; line-height: 1.32; color: var(--tx); margin-bottom: 10px; }
+    .q-hint { font-size: 14px; color: var(--txl); margin-bottom: 30px; line-height: 1.6; }
+    .a-list { display: flex; flex-direction: column; gap: 10px; }
+
+    /* Answer button */
+    .a-btn {
+      display: flex; align-items: center; gap: 14px;
+      padding: 15px 20px; border-radius: 14px;
+      border: 1.5px solid var(--br); background: var(--card); color: var(--tx);
+      cursor: pointer; font-family: inherit; font-size: 15px; text-align: left;
+      transition: border-color 0.2s, background 0.2s, transform 0.18s; width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .a-btn:hover { border-color: var(--ac); background: var(--acxl); }
+    .a-btn:active { transform: scale(0.99); }
+    .a-btn:focus-visible { outline: 3px solid var(--ac); outline-offset: 2px; }
+    .a-btn.sel {
+      border-color: var(--ac); background: var(--acl); font-weight: 500;
+      animation: selPulse 0.32s ease;
+    }
+    .a-btn.sel .a-ico { background: var(--ac); border-color: var(--ac); color: #fff; }
+    @keyframes selPulse {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.012); }
+      100% { transform: scale(1); }
+    }
+    .a-ico {
+      width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
+      border: 1.5px solid var(--br); display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; color: var(--txl); transition: all 0.2s;
+    }
+
+    /* Auto-advance hint */
+    .q-hint-auto {
+      font-size: 12px; color: var(--txl); opacity: 0.6;
+      text-align: center; margin-top: 18px; letter-spacing: 0.1px;
+    }
+
+    .skip-lnk {
+      display: inline-block; margin-top: 13px;
+      font-size: 13px; color: var(--txl); cursor: pointer;
+      background: none; border: none; font-family: inherit;
+      text-decoration: underline; text-underline-offset: 3px; padding: 4px 0;
+    }
+    .skip-lnk:hover { color: var(--ac); }
+    .skip-lnk:focus-visible { outline: 2px solid var(--ac); border-radius: 2px; }
+
+    /* Nav: only back button on steps 1–5, back + confirm on step 6 */
+    .q-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--br);
+    }
+    .q-nav.nav-back-only { justify-content: flex-start; }
+    .btn-back {
+      padding: 11px 24px; border-radius: 100px; border: 1.5px solid var(--br);
+      background: transparent; color: var(--txl); cursor: pointer;
+      font-family: inherit; font-size: 14px; font-weight: 500; transition: all 0.22s;
+    }
+    .btn-back:hover { border-color: var(--ac); color: var(--ac); }
+    .btn-back:disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+    .btn-back:focus-visible { outline: 3px solid var(--ac); outline-offset: 2px; }
+    .btn-res {
+      padding: 12px 26px; border-radius: 100px; border: 1.5px solid var(--br);
+      background: transparent; color: var(--txl); cursor: pointer;
+      font-family: inherit; font-size: 13px; font-weight: 500; transition: all 0.22s;
+    }
+    .btn-res:hover { border-color: var(--ac); color: var(--ac); }
+    .btn-res:focus-visible { outline: 3px solid var(--ac); outline-offset: 3px; }
+
+    /* ── RESULT ──────────────────────────────────── */
+    .res-sec { display: none; background: var(--bg); padding: 72px 24px 100px; }
+    .res-sec.on { display: block; }
+    .res-hdr { max-width: 660px; margin: 0 auto 52px; text-align: center; }
+    .res-lead { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ac); margin-bottom: 16px; }
+    .res-h2 { font-family: 'Lora', Georgia, serif; font-size: clamp(24px,4vw,36px); font-weight: 500; color: var(--tx); margin-bottom: 14px; line-height: 1.22; }
+    .res-body { font-size: 15px; line-height: 1.72; color: var(--txl); margin-bottom: 20px; }
+    .res-note { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 100px; font-size: 12.5px; font-weight: 500; background: var(--scl); color: var(--sc); }
+
+    .res-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 940px; margin: 0 auto 64px; }
+    .res-card {
+      background: var(--card); border-radius: 20px; padding: 30px 26px;
+      border-top: 3px solid var(--br);
+      box-shadow: 0 4px 20px var(--sh), 0 1px 4px rgba(0,0,0,0.04);
+      transition: box-shadow 0.24s, transform 0.24s, border-top-color 0.24s;
+    }
+    .res-card:hover { box-shadow: 0 10px 36px var(--shl); transform: translateY(-3px); }
+
+    /* Highlighted card (Q6 Hauptanliegen) */
+    .res-card.hl {
+      border-top-color: var(--ac);
+      box-shadow: 0 6px 28px var(--shl);
+    }
+    .main-badge {
+      display: none; align-items: center; gap: 5px;
+      padding: 3px 11px; border-radius: 100px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+      background: var(--acl); color: var(--ac); margin-bottom: 12px;
+    }
+    .res-card.hl .main-badge { display: inline-flex; }
+
+    .rc-ico { font-size: 28px; margin-bottom: 14px; }
+    .res-card h3 { font-size: 16px; font-weight: 600; color: var(--tx); margin-bottom: 11px; line-height: 1.35; }
+    .res-card p { font-size: 14px; line-height: 1.68; color: var(--txl); }
+
+    /* ── CTA CARD + FORM ─────────────────────────── */
+    .cta-card {
+      max-width: 720px; margin: 0 auto;
+      background: var(--card); border-radius: 24px; padding: 54px 50px;
+      box-shadow: 0 8px 48px var(--sh), 0 2px 8px rgba(0,0,0,0.04);
+      text-align: center;
+      /* prevent scroll jump on form hide */
+      overflow-anchor: none;
+    }
+    .cta-h3 { font-family: 'Lora', Georgia, serif; font-size: clamp(20px,3.5vw,28px); font-weight: 500; color: var(--tx); margin-bottom: 14px; }
+    .cta-body { font-size: 16px; line-height: 1.72; color: var(--txl); margin-bottom: 38px; }
+    .form-wrap { text-align: left; }
+    .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .ff { display: flex; flex-direction: column; gap: 6px; }
+    .ff.full { grid-column: 1 / -1; }
+    .ff label { font-size: 13px; font-weight: 500; color: var(--tx); }
+    .opt { font-weight: 400; font-size: 11px; color: var(--txl); margin-left: 4px; }
+    .ff input, .ff select {
+      padding: 13px 16px; border-radius: 12px; border: 1.5px solid var(--br);
+      background: var(--bg); font-family: inherit; font-size: 15px; color: var(--tx);
+      transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+      appearance: none; -webkit-appearance: none;
+    }
+    .ff input::placeholder { color: var(--txl); opacity: 0.65; }
+    .ff input:focus, .ff select:focus { border-color: var(--ac); box-shadow: 0 0 0 3px var(--acl); }
+    .ff.err input, .ff.err select { border-color: #D94040; }
+    .ferr { font-size: 12px; color: #C03030; display: none; margin-top: 2px; }
+    .ff.err .ferr { display: block; }
+    .cb-row { display: flex; align-items: flex-start; gap: 12px; margin: 18px 0 22px; cursor: pointer; }
+    .cb-row input[type=checkbox] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; cursor: pointer; accent-color: var(--ac); }
+    .cb-row span { font-size: 13px; line-height: 1.55; color: var(--txl); }
+    .cb-row a { color: var(--ac); }
+    .cb-err { font-size: 12px; color: #C03030; display: none; margin-top: -16px; margin-bottom: 16px; }
+    .btn-sub {
+      width: 100%; padding: 17px; border-radius: 100px; border: none;
+      background: var(--ac); color: #fff; cursor: pointer;
+      font-family: inherit; font-size: 16px; font-weight: 600; transition: all 0.26s;
+    }
+    .btn-sub:hover { background: var(--ach); transform: translateY(-2px); box-shadow: 0 10px 28px var(--shl); }
+    .btn-sub:focus-visible { outline: 3px solid var(--ac); outline-offset: 3px; }
+    .form-micro { margin-top: 16px; font-size: 13px; text-align: center; line-height: 1.55; color: var(--txl); }
+    .form-trust { display: flex; justify-content: center; gap: 18px; margin-top: 18px; flex-wrap: wrap; }
+    .fti { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--txl); }
+    .fsuc { display: none; text-align: center; padding: 48px 16px; animation: fadeUp 0.4s ease; }
+    .fsuc.on { display: block; }
+    .suc-ico { width: 64px; height: 64px; border-radius: 50%; background: var(--scl); color: var(--sc); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; }
+    .suc-h3 { font-family: 'Lora', Georgia, serif; font-size: 22px; font-weight: 500; color: var(--tx); margin-bottom: 10px; }
+    .suc-p { font-size: 15px; line-height: 1.65; color: var(--txl); }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 800px) {
+      .hero-in { grid-template-columns: 1fr; text-align: center; gap: 36px; }
+      .h-vis { order: -1; }
+      .orb { width: 200px; height: 200px; }
+      .or1 { width: 130px; height: 130px; } .or2 { width: 170px; height: 170px; } .or3 { width: 200px; height: 200px; }
+      .orb-c { width: 60px; height: 60px; font-size: 26px; border-radius: 16px; }
+      .h-sub { margin: 0 auto 34px; }
+      .trust-pills { justify-content: center; }
+      .why-grid, .res-cards { grid-template-columns: 1fr; }
+      .fg { grid-template-columns: 1fr; }
+      .cta-card { padding: 36px 22px; }
+      .pb-meta, .pb-divider { display: none; }
+    }
+    @media (max-width: 480px) {
+      .tog { padding: 6px 14px; font-size: 12px; }
+      .sec { padding: 60px 18px; }
+      .quiz-sec { padding: 0 18px 60px; }
+      .res-sec { padding: 56px 18px 76px; }
+      .a-btn { font-size: 14px; padding: 14px 16px; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     PREVIEW BAR
+════════════════════════════════════ -->
+<nav class="preview-bar" aria-label="Vorschau-Navigation">
+  <span class="pb-meta">Vorschau-Modus</span>
+  <div class="pb-divider" aria-hidden="true"></div>
+  <div class="toggle-wrap" role="group" aria-label="Version wählen">
+    <button class="tog on-w" id="btn-w" onclick="switchLP('w')" aria-pressed="true">Frauen-Version</button>
+    <button class="tog"      id="btn-m" onclick="switchLP('m')" aria-pressed="false">Männer-Version</button>
+  </div>
+  <div class="pb-divider" aria-hidden="true"></div>
+  <span class="pb-meta" style="color:#444">Nicht Teil des Funnels</span>
+</nav>
+
+
+<!-- ════════════════════════════════════
+     FRAUEN LANDINGPAGE
+════════════════════════════════════ -->
+<div id="lp-w" class="lp w show">
+
+  <section class="hero">
+    <div class="hero-in">
+      <div>
+        <div class="h-badge">Beckenboden-Checkup für Frauen</div>
+        <h1 class="h1">Wie geht es<br>Ihrem Beckenboden?</h1>
+        <p class="h-sub">Ein kurzer, geführter Checkup – diskret, unverbindlich und ohne medizinische Diagnose. Für ein erstes Gefühl, welche Themen für Sie persönlich relevant sein könnten.</p>
+        <button class="btn-p" onclick="startQuiz('w')">Checkup starten <span aria-hidden="true">→</span></button>
+        <p class="h-note">Ca. 3 Minuten · Keine Anmeldung · Völlig unverbindlich</p>
+        <div class="trust-pills">
+          <div class="tpill">✓ Diskret</div>
+          <div class="tpill">✓ Unverbindlich</div>
+          <div class="tpill">✓ Keine Diagnose</div>
+        </div>
+      </div>
+      <div class="h-vis" aria-hidden="true">
+        <div class="orb">
+          <div class="orb-bg"></div>
+          <div class="orb-r or1"></div>
+          <div class="orb-r or2"></div>
+          <div class="orb-r or3"></div>
+          <div class="orb-c">🌸</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec why-sec">
+    <div class="sec-in">
+      <div class="slbl">Warum dieser Checkup?</div>
+      <h2 class="sh2">Viele Frauen sprechen<br>selten darüber</h2>
+      <p class="sbody">Beckenbodenbeschwerden sind häufiger als gedacht – und doch kaum Gesprächsthema. Dieser Checkup gibt Ihnen Raum, sich in Ihrem eigenen Tempo zu informieren.</p>
+      <div class="why-grid">
+        <div class="why-card"><div class="w-ico">💬</div><h3>Diskreter Einstieg</h3><p>Kein Wartezimmer, kein Termin. Sie beginnen einfach hier – anonym, ruhig und ohne jede Verpflichtung.</p></div>
+        <div class="why-card"><div class="w-ico">🌿</div><h3>Persönliche Orientierung</h3><p>Ihre Antworten können Hinweise geben, welche Bereiche für Sie persönlich relevant sein könnten.</p></div>
+        <div class="why-card"><div class="w-ico">🤝</div><h3>Unverbindlicher nächster Schritt</h3><p>Am Ende können Sie ein Probetraining anfragen. Wir schauen gemeinsam, ob es zu Ihrem Thema passt.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="qpb" id="qpb-w" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Checkup-Fortschritt">
+    <div class="qpb-in">
+      <div class="qpb-meta"><span id="qpb-w-lbl">Frage 1 von 6</span><span id="qpb-w-pct">0 %</span></div>
+      <div class="qpb-track"><div class="qpb-fill" id="qpb-w-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div id="qa-w"></div>
+
+  <section class="quiz-sec" id="qs-w" aria-label="Beckenboden-Checkup">
+    <div class="quiz-hdr">
+      <div class="slbl">Ihr persönlicher Checkup</div>
+      <h2 class="sh2" style="font-size:clamp(22px,3.5vw,32px)">Lassen Sie uns gemeinsam auf Ihr Thema schauen</h2>
+      <p>Der Beckenboden beeinflusst ganz viele Themen in unserem Körper – unsere Blasenfunktion, unsere Sexualität, unseren Rücken, die Position unserer Organe. Alle Angaben sind freiwillig.</p>
+    </div>
+    <div class="quiz-wrap">
+
+      <div class="q-step on" id="w-s1">
+        <div class="q-q">Kommt es vor, dass Sie beim Husten, Niesen, Lachen oder Laufen manchmal Harn verlieren – oder spüren Sie einen plötzlichen, dringenden Harndrang?</div>
+        <p class="q-hint">Denken Sie auch an Situationen wie Springen, Heben oder Treppensteigen.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.w.sel(1,'a',this)"><span class="a-ico">A</span>Nein, das ist kein Thema für mich</button>
+          <button class="a-btn" onclick="Q.w.sel(1,'b',this)"><span class="a-ico">B</span>Selten – nur bei sehr starker Belastung</button>
+          <button class="a-btn" onclick="Q.w.sel(1,'c',this)"><span class="a-ico">C</span>Manchmal – in bestimmten Situationen</button>
+          <button class="a-btn" onclick="Q.w.sel(1,'d',this)"><span class="a-ico">D</span>Ja, das beschäftigt mich – ich achte bewusst darauf</button>
+        </div>
+        <div class="q-nav nav-back-only">
+          <button class="btn-back" disabled>← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="w-s2">
+        <div class="q-q">Haben Sie Kinder geboren, und haben Sie seitdem Veränderungen bemerkt?</div>
+        <p class="q-hint">Schwangerschaft und Geburt haben natürlich einen immensen Einfluss auf den Beckenboden – diese Frage ist vollständig freiwillig.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.w.sel(2,'a',this)"><span class="a-ico">A</span>Ja, und ich habe deutliche Veränderungen bemerkt</button>
+          <button class="a-btn" onclick="Q.w.sel(2,'b',this)"><span class="a-ico">B</span>Ja, aber nur leichte oder kaum merkliche Veränderungen</button>
+          <button class="a-btn" onclick="Q.w.sel(2,'c',this)"><span class="a-ico">C</span>Nein / keine Kinder</button>
+        </div>
+        <button class="skip-lnk" onclick="Q.w.skp(2)">Diese Frage überspringen</button>
+        <div class="q-nav">
+          <button class="btn-back" onclick="Q.w.prv(2)">← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="w-s3">
+        <div class="q-q">Hat Ihr Gynäkologe schon einmal etwas von einer Organsenkung erwähnt – oder haben Sie manchmal ein Fremdkörpergefühl im Beckenbereich?</div>
+        <p class="q-hint">Diese Frage ist vollständig freiwillig und kann jederzeit übersprungen werden.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.w.sel(3,'a',this)"><span class="a-ico">A</span>Nein, das ist kein Thema</button>
+          <button class="a-btn" onclick="Q.w.sel(3,'b',this)"><span class="a-ico">B</span>Manchmal ein leichtes Druckgefühl nach unten</button>
+          <button class="a-btn" onclick="Q.w.sel(3,'c',this)"><span class="a-ico">C</span>Ja, eine Senkung wurde von meiner Ärztin erwähnt</button>
+          <button class="a-btn" onclick="Q.w.sel(3,'d',this)"><span class="a-ico">D</span>Ja, ich spüre ein deutliches Fremdkörpergefühl</button>
+        </div>
+        <button class="skip-lnk" onclick="Q.w.skp(3)">Diese Frage überspringen</button>
+        <div class="q-nav">
+          <button class="btn-back" onclick="Q.w.prv(3)">← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="w-s4">
+        <div class="q-q">Haben Sie manchmal Rückenschmerzen – und wo genau spüren Sie diese?</div>
+        <p class="q-hint">Stellen Sie sich ein Haus vor: Der Beckenboden ist der Boden, der alles trägt. Fehlt dieser Boden, können die Wände nicht gehalten werden. Genauso braucht Ihr Rücken den Beckenboden als starkes Fundament.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.w.sel(4,'a',this)"><span class="a-ico">A</span>Nein – Rücken und Stabilität sind gut</button>
+          <button class="a-btn" onclick="Q.w.sel(4,'b',this)"><span class="a-ico">B</span>Gelegentliche leichte Beschwerden</button>
+          <button class="a-btn" onclick="Q.w.sel(4,'c',this)"><span class="a-ico">C</span>Häufige Rückenbeschwerden – ich achte bereits darauf</button>
+          <button class="a-btn" onclick="Q.w.sel(4,'d',this)"><span class="a-ico">D</span>Starke Beschwerden – schränken mich im Alltag ein</button>
+        </div>
+        <div class="q-nav nav-back-only">
+          <button class="btn-back" onclick="Q.w.prv(4)">← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="w-s5">
+        <div class="q-q">Die Qualität des Körpergefühls und der Intimität hängt sehr eng mit dem Beckenboden zusammen. Gibt es hier etwas, das Sie beschäftigt?</div>
+        <p class="q-hint">Diese Frage ist vollständig freiwillig und kann jederzeit übersprungen werden.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.w.sel(5,'a',this)"><span class="a-ico">A</span>Nein, ich bin zufrieden – kein Thema</button>
+          <button class="a-btn" onclick="Q.w.sel(5,'b',this)"><span class="a-ico">B</span>Ich spüre meinen Partner nicht mehr so gut wie früher</button>
+          <button class="a-btn" onclick="Q.w.sel(5,'c',this)"><span class="a-ico">C</span>Ich habe manchmal Schmerzen beim Sex</button>
+          <button class="a-btn" onclick="Q.w.sel(5,'d',this)"><span class="a-ico">D</span>Meine Orgasmen sind nicht mehr so intensiv wie früher</button>
+        </div>
+        <button class="skip-lnk" onclick="Q.w.skp(5)">Diese Frage überspringen</button>
+        <div class="q-nav">
+          <button class="btn-back" onclick="Q.w.prv(5)">← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="w-s6">
+        <div class="q-q">Wenn Sie sich etwas wünschen könnten – was würde sich für Sie ändern, wenn sich Ihr Thema verbessert?</div>
+        <p class="q-hint">Ihre Antwort hilft uns, das Probetraining besser auf Sie abzustimmen.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.w.sel(6,'a',this)"><span class="a-ico">A</span>Wieder unbeschwert aktiv sein – ohne an die Blase denken zu müssen</button>
+          <button class="a-btn" onclick="Q.w.sel(6,'b',this)"><span class="a-ico">B</span>Mehr Stabilität und weniger Rückenbeschwerden im Alltag</button>
+          <button class="a-btn" onclick="Q.w.sel(6,'c',this)"><span class="a-ico">C</span>Ein besseres Körpergefühl und mehr Wohlbefinden in der Intimität</button>
+          <button class="a-btn" onclick="Q.w.sel(6,'d',this)"><span class="a-ico">D</span>Ich möchte mich erst einmal unverbindlich informieren</button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back" onclick="Q.w.prv(6)">← Zurück</button>
+          <button class="btn-res" onclick="Q.w.res()">Ergebnis anzeigen →</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="res-sec" id="rs-w" aria-label="Ihr Ergebnis">
+    <div class="res-hdr">
+      <div class="res-lead">Ihr persönliches Ergebnis</div>
+      <h2 class="res-h2" id="rs-h2-w">Ihre Antworten geben Hinweise<br>auf drei Bereiche</h2>
+      <p class="res-body">Bitte beachten Sie: Dieser Checkup ersetzt keine ärztliche Diagnose. Alle Hinweise dienen ausschließlich der persönlichen Orientierung.</p>
+      <div class="res-note">✓ Kein medizinischer Befund · Nur Orientierungshilfe</div>
+    </div>
+    <div class="res-cards">
+      <article class="res-card" id="rc-w-1">
+        <div class="rc-ico">💧</div>
+        <div class="main-badge">Ihr Wunschziel</div>
+        <h3>Blasenkontrolle & Beckenorgane</h3>
+        <p id="rct-w-1">Ihre Antworten können Hinweise geben, dass dieser Bereich für Sie relevant sein könnte.</p>
+      </article>
+      <article class="res-card" id="rc-w-2">
+        <div class="rc-ico">🌿</div>
+        <div class="main-badge">Ihr Wunschziel</div>
+        <h3>Rücken & Stabilität</h3>
+        <p id="rct-w-2">Beckenboden und Rücken arbeiten immer zusammen – der Beckenboden ist das Fundament.</p>
+      </article>
+      <article class="res-card" id="rc-w-3">
+        <div class="rc-ico">🌸</div>
+        <div class="main-badge">Ihr Wunschziel</div>
+        <h3>Körpergefühl & Intimität</h3>
+        <p id="rct-w-3">Viele Frauen wissen nicht, dass der Beckenboden maßgeblich für die Qualität der Sexualität ist.</p>
+      </article>
+    </div>
+
+    <div class="cta-card">
+      <h3 class="cta-h3">Der nächste sinnvolle Schritt</h3>
+      <p class="cta-body">Ein persönliches Probetraining kann sinnvoll sein. Dabei können Sie diskret erleben, wie die Beckenbodenmuskulatur aktiviert wird – und wir schauen gemeinsam, ob das Training zu Ihrem Thema passt.</p>
+      <div class="form-wrap" id="fw-w">
+        <form onsubmit="doSubmit(event,'w')" novalidate>
+          <div class="fg">
+            <div class="ff" id="ff-w-vn"><label for="w-vn">Vorname</label><input type="text" id="w-vn" autocomplete="given-name" placeholder="Ihr Vorname"><span class="ferr">Bitte geben Sie Ihren Vornamen ein.</span></div>
+            <div class="ff" id="ff-w-tel"><label for="w-tel">Telefonnummer</label><input type="tel" id="w-tel" autocomplete="tel" placeholder="z. B. 0151 00 00 00 00"><span class="ferr">Bitte geben Sie Ihre Telefonnummer ein.</span></div>
+            <div class="ff"><label for="w-mail">E-Mail <span class="opt">(optional)</span></label><input type="email" id="w-mail" autocomplete="email" placeholder="Ihre E-Mail-Adresse"></div>
+            <div class="ff"><label for="w-std">Wunschstandort <span class="opt">(optional)</span></label>
+              <select id="w-std"><option value="">Bitte auswählen …</option><option>München</option><option>Hamburg</option><option>Berlin</option><option>Düsseldorf</option><option>Frankfurt</option><option>Stuttgart</option></select>
+            </div>
+            <div class="ff full"><label for="w-kz">Bevorzugte Kontaktzeit</label>
+              <select id="w-kz"><option value="">Bitte auswählen …</option><option>Morgens (8–12 Uhr)</option><option>Mittags (12–14 Uhr)</option><option>Nachmittags (14–18 Uhr)</option><option>Flexibel / jederzeit</option></select>
+            </div>
+          </div>
+          <label class="cb-row" id="cb-w"><input type="checkbox" id="w-ds"><span>Ich stimme der Verarbeitung meiner Daten zur Beantwortung meiner Anfrage zu. Weitere Informationen finden Sie in unserer <a href="#" onclick="return false">Datenschutzerklärung</a>.</span></label>
+          <div class="cb-err" id="cbe-w">Bitte stimmen Sie der Datenschutzerklärung zu.</div>
+          <button class="btn-sub" type="submit">Probetraining anfragen</button>
+        </form>
+        <p class="form-micro">Wir melden uns persönlich bei Ihnen, beantworten offene Fragen und schauen gemeinsam, ob ein Probetraining für Sie passend ist.</p>
+        <div class="form-trust">
+          <div class="fti">🔒 Daten sicher & vertraulich</div>
+          <div class="fti">✓ Kein Verkaufsgespräch</div>
+          <div class="fti">✓ Persönliche Begleitung</div>
+        </div>
+      </div>
+      <div class="fsuc" id="fs-w" role="status" aria-live="polite">
+        <div class="suc-ico">✓</div>
+        <h3 class="suc-h3">Vielen Dank für Ihre Anfrage</h3>
+        <p class="suc-p">Wir melden uns persönlich bei Ihnen und schauen gemeinsam, ob ein Probetraining für Sie der richtige nächste Schritt ist.</p>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /lp-w -->
+
+
+<!-- ════════════════════════════════════
+     MÄNNER LANDINGPAGE
+════════════════════════════════════ -->
+<div id="lp-m" class="lp m">
+
+  <section class="hero">
+    <div class="hero-in">
+      <div>
+        <div class="h-badge">Beckenboden-Checkup für Männer</div>
+        <h1 class="h1">Wie gut kennen Sie<br>Ihren Beckenboden?</h1>
+        <p class="h-sub">Ein kurzer, geführter Checkup – diskret, unverbindlich und ohne medizinische Diagnose. Für ein erstes Bild, welche Themen für Sie persönlich relevant sein könnten.</p>
+        <button class="btn-p" onclick="startQuiz('m')">Checkup starten <span aria-hidden="true">→</span></button>
+        <p class="h-note">Ca. 3 Minuten · Keine Anmeldung · Völlig unverbindlich</p>
+        <div class="trust-pills">
+          <div class="tpill">✓ Diskret</div>
+          <div class="tpill">✓ Unverbindlich</div>
+          <div class="tpill">✓ Keine Diagnose</div>
+        </div>
+      </div>
+      <div class="h-vis" aria-hidden="true">
+        <div class="orb">
+          <div class="orb-bg"></div>
+          <div class="orb-r or1"></div>
+          <div class="orb-r or2"></div>
+          <div class="orb-r or3"></div>
+          <div class="orb-c">🩺</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec why-sec">
+    <div class="sec-in">
+      <div class="slbl">Warum dieser Checkup?</div>
+      <h2 class="sh2">Wenig bekannt –<br>klinisch gut belegt</h2>
+      <p class="sbody">Der Beckenboden ist auch für Männer zentral: Blasenkontrolle, Prostataentlastung, Rückenstabilität und körperliche Vitalität hängen direkt damit zusammen.</p>
+      <div class="why-grid">
+        <div class="why-card"><div class="w-ico">💬</div><h3>Diskreter Einstieg</h3><p>Kein Termin, kein Wartezimmer. Sie beginnen hier – anonym, sachlich und ohne jede Verpflichtung.</p></div>
+        <div class="why-card"><div class="w-ico">🎯</div><h3>Persönliche Orientierung</h3><p>Ihre Antworten können Hinweise geben, welche Bereiche für Sie persönlich relevant sein könnten.</p></div>
+        <div class="why-card"><div class="w-ico">🤝</div><h3>Unverbindlicher nächster Schritt</h3><p>Am Ende können Sie ein Probetraining anfragen. Wir schauen gemeinsam, ob es zu Ihrem Thema passt.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="qpb" id="qpb-m" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Checkup-Fortschritt">
+    <div class="qpb-in">
+      <div class="qpb-meta"><span id="qpb-m-lbl">Frage 1 von 6</span><span id="qpb-m-pct">0 %</span></div>
+      <div class="qpb-track"><div class="qpb-fill" id="qpb-m-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div id="qa-m"></div>
+
+  <section class="quiz-sec" id="qs-m" aria-label="Beckenboden-Checkup">
+    <div class="quiz-hdr">
+      <div class="slbl">Ihr persönlicher Checkup</div>
+      <h2 class="sh2" style="font-size:clamp(22px,3.5vw,32px)">Lassen Sie uns gemeinsam auf Ihr Thema schauen</h2>
+      <p>Der Beckenboden beeinflusst ganz viele Themen in unserem Körper – unsere Blasenfunktion, unsere Sexualität, unseren Rücken. Alle Angaben sind freiwillig.</p>
+    </div>
+    <div class="quiz-wrap">
+
+      <div class="q-step on" id="m-s1">
+        <div class="q-q">Wie erleben Sie Ihre Blasenkontrolle im Alltag?</div>
+        <p class="q-hint">Denken Sie an plötzlichen, dringenden Harndrang – auch nachts –, und ob nach dem Toilettengang manchmal noch etwas nachtröpfelt.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.m.sel(1,'a',this)"><span class="a-ico">A</span>Sehr gut – keinerlei Beschwerden</button>
+          <button class="a-btn" onclick="Q.m.sel(1,'b',this)"><span class="a-ico">B</span>Meistens gut – gelegentlich dringender Harndrang</button>
+          <button class="a-btn" onclick="Q.m.sel(1,'c',this)"><span class="a-ico">C</span>Manchmal schwierig – auch nachts oder mit Nachtröpfeln</button>
+          <button class="a-btn" onclick="Q.m.sel(1,'d',this)"><span class="a-ico">D</span>Häufig herausfordernd – ich achte bewusst darauf</button>
+        </div>
+        <div class="q-nav nav-back-only">
+          <button class="btn-back" disabled>← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="m-s2">
+        <div class="q-q">Haben Sie manchmal Rückenschmerzen – und wo genau spüren Sie diese?</div>
+        <p class="q-hint">Stellen Sie sich ein Haus vor: Der Beckenboden ist der Boden, der alles trägt. Ohne ihn können die Wände – also Ihre Rückenmuskulatur – nicht gehalten werden. Beides hängt immer eng zusammen.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.m.sel(2,'a',this)"><span class="a-ico">A</span>Gut – keinerlei Rückenbeschwerden</button>
+          <button class="a-btn" onclick="Q.m.sel(2,'b',this)"><span class="a-ico">B</span>Gelegentliche leichte Beschwerden</button>
+          <button class="a-btn" onclick="Q.m.sel(2,'c',this)"><span class="a-ico">C</span>Häufige Beschwerden – ich achte darauf</button>
+          <button class="a-btn" onclick="Q.m.sel(2,'d',this)"><span class="a-ico">D</span>Stark eingeschränkt – schränkt meinen Alltag ein</button>
+        </div>
+        <div class="q-nav nav-back-only">
+          <button class="btn-back" onclick="Q.m.prv(2)">← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="m-s3">
+        <div class="q-q">Hat Ihr Urologe schon einmal etwas von einer Prostatektomie erwähnt – oder bestehen bei Ihnen prostatabezogene Themen?</div>
+        <p class="q-hint">Diese Frage ist vollständig freiwillig und kann jederzeit übersprungen werden.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.m.sel(3,'a',this)"><span class="a-ico">A</span>Nein – kein bekanntes Thema</button>
+          <button class="a-btn" onclick="Q.m.sel(3,'b',this)"><span class="a-ico">B</span>Leichte Hinweise wurden erwähnt – ich beobachte es</button>
+          <button class="a-btn" onclick="Q.m.sel(3,'c',this)"><span class="a-ico">C</span>Ja – der Arzt hat Maßnahmen empfohlen</button>
+          <button class="a-btn" onclick="Q.m.sel(3,'d',this)"><span class="a-ico">D</span>Ja – ich hatte oder erwarte eine Prostatektomie</button>
+        </div>
+        <button class="skip-lnk" onclick="Q.m.skp(3)">Diese Frage überspringen</button>
+        <div class="q-nav">
+          <button class="btn-back" onclick="Q.m.prv(3)">← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="m-s4">
+        <div class="q-q">Die Qualität der Sexualität und Potenz hängt sehr eng mit dem Beckenboden zusammen. Sind Sie, was das betrifft, zufrieden?</div>
+        <p class="q-hint">Diese Frage ist vollständig freiwillig und kann jederzeit übersprungen werden.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.m.sel(4,'a',this)"><span class="a-ico">A</span>Ja, ich bin zufrieden – kein Thema</button>
+          <button class="a-btn" onclick="Q.m.sel(4,'b',this)"><span class="a-ico">B</span>Erektion kommt zustande, aber ich bin weniger sicher als früher</button>
+          <button class="a-btn" onclick="Q.m.sel(4,'c',this)"><span class="a-ico">C</span>Die Qualität der Erektionen hat nachgelassen</button>
+          <button class="a-btn" onclick="Q.m.sel(4,'d',this)"><span class="a-ico">D</span>Das ist ein Thema, das mich beschäftigt</button>
+        </div>
+        <button class="skip-lnk" onclick="Q.m.skp(4)">Diese Frage überspringen</button>
+        <div class="q-nav">
+          <button class="btn-back" onclick="Q.m.prv(4)">← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="m-s5">
+        <div class="q-q">Wie sieht Ihr Berufs- und Bewegungsalltag aus?</div>
+        <p class="q-hint">Das hat auch einen direkten Einfluss auf den Beckenboden – bestimmte Belastungen können ihn schwächen, andere stärken ihn.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.m.sel(5,'a',this)"><span class="a-ico">A</span>Vorwiegend sitzend – wenig Bewegung</button>
+          <button class="a-btn" onclick="Q.m.sel(5,'b',this)"><span class="a-ico">B</span>Vorwiegend stehend oder körperlich aktiv</button>
+          <button class="a-btn" onclick="Q.m.sel(5,'c',this)"><span class="a-ico">C</span>Ich treibe regelmäßig Sport (mind. 2× pro Woche)</button>
+          <button class="a-btn" onclick="Q.m.sel(5,'d',this)"><span class="a-ico">D</span>Sehr wechselhaft – je nach Woche unterschiedlich</button>
+        </div>
+        <div class="q-nav nav-back-only">
+          <button class="btn-back" onclick="Q.m.prv(5)">← Zurück</button>
+        </div>
+      </div>
+
+      <div class="q-step" id="m-s6">
+        <div class="q-q">Wenn Sie sich etwas wünschen könnten – was würde sich für Sie ändern, wenn sich Ihr Thema verbessert?</div>
+        <p class="q-hint">Ihre Antwort hilft uns, das Probetraining besser auf Sie abzustimmen.</p>
+        <div class="a-list">
+          <button class="a-btn" onclick="Q.m.sel(6,'a',this)"><span class="a-ico">A</span>Wieder unbeschwert aktiv sein – ohne an die Blase denken zu müssen</button>
+          <button class="a-btn" onclick="Q.m.sel(6,'b',this)"><span class="a-ico">B</span>Mehr Stabilität, Rückenkraft und körperliche Ausdauer</button>
+          <button class="a-btn" onclick="Q.m.sel(6,'c',this)"><span class="a-ico">C</span>Mehr Vitalität und Zuversicht – in der Partnerschaft und im Alltag</button>
+          <button class="a-btn" onclick="Q.m.sel(6,'d',this)"><span class="a-ico">D</span>Ich möchte mich erst einmal unverbindlich informieren</button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back" onclick="Q.m.prv(6)">← Zurück</button>
+          <button class="btn-res" onclick="Q.m.res()">Ergebnis anzeigen →</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="res-sec" id="rs-m" aria-label="Ihr Ergebnis">
+    <div class="res-hdr">
+      <div class="res-lead">Ihr persönliches Ergebnis</div>
+      <h2 class="res-h2" id="rs-h2-m">Ihre Antworten geben Hinweise<br>auf drei Bereiche</h2>
+      <p class="res-body">Bitte beachten Sie: Dieser Checkup ersetzt keine ärztliche Diagnose. Alle Hinweise dienen ausschließlich der persönlichen Orientierung.</p>
+      <div class="res-note">✓ Kein medizinischer Befund · Nur Orientierungshilfe</div>
+    </div>
+    <div class="res-cards">
+      <article class="res-card" id="rc-m-1">
+        <div class="rc-ico">💧</div>
+        <div class="main-badge">Ihr Wunschziel</div>
+        <h3>Blase & Kontrolle</h3>
+        <p id="rct-m-1">Ihre Antworten können Hinweise geben, dass dieser Bereich für Sie relevant sein könnte.</p>
+      </article>
+      <article class="res-card" id="rc-m-2">
+        <div class="rc-ico">🌿</div>
+        <div class="main-badge">Ihr Wunschziel</div>
+        <h3>Prostata, Potenz & Regeneration</h3>
+        <p id="rct-m-2">Beckenboden, Prostatagesundheit und Erektionsfähigkeit hängen direkt zusammen.</p>
+      </article>
+      <article class="res-card" id="rc-m-3">
+        <div class="rc-ico">💪</div>
+        <div class="main-badge">Ihr Wunschziel</div>
+        <h3>Stabilität, Rücken & Vitalität</h3>
+        <p id="rct-m-3">Der Beckenboden ist das Fundament – Rücken, Haltung und Ausdauer hängen direkt davon ab.</p>
+      </article>
+    </div>
+
+    <div class="cta-card">
+      <h3 class="cta-h3">Der nächste sinnvolle Schritt</h3>
+      <p class="cta-body">Ein persönliches Probetraining kann sinnvoll sein. Dabei können Sie diskret erleben, wie die Beckenbodenmuskulatur aktiviert wird – und wir schauen gemeinsam, ob das Training zu Ihrem Thema passt.</p>
+      <div class="form-wrap" id="fw-m">
+        <form onsubmit="doSubmit(event,'m')" novalidate>
+          <div class="fg">
+            <div class="ff" id="ff-m-vn"><label for="m-vn">Vorname</label><input type="text" id="m-vn" autocomplete="given-name" placeholder="Ihr Vorname"><span class="ferr">Bitte geben Sie Ihren Vornamen ein.</span></div>
+            <div class="ff" id="ff-m-tel"><label for="m-tel">Telefonnummer</label><input type="tel" id="m-tel" autocomplete="tel" placeholder="z. B. 0151 00 00 00 00"><span class="ferr">Bitte geben Sie Ihre Telefonnummer ein.</span></div>
+            <div class="ff"><label for="m-mail">E-Mail <span class="opt">(optional)</span></label><input type="email" id="m-mail" autocomplete="email" placeholder="Ihre E-Mail-Adresse"></div>
+            <div class="ff"><label for="m-std">Wunschstandort <span class="opt">(optional)</span></label>
+              <select id="m-std"><option value="">Bitte auswählen …</option><option>München</option><option>Hamburg</option><option>Berlin</option><option>Düsseldorf</option><option>Frankfurt</option><option>Stuttgart</option></select>
+            </div>
+            <div class="ff full"><label for="m-kz">Bevorzugte Kontaktzeit</label>
+              <select id="m-kz"><option value="">Bitte auswählen …</option><option>Morgens (8–12 Uhr)</option><option>Mittags (12–14 Uhr)</option><option>Nachmittags (14–18 Uhr)</option><option>Flexibel / jederzeit</option></select>
+            </div>
+          </div>
+          <label class="cb-row" id="cb-m"><input type="checkbox" id="m-ds"><span>Ich stimme der Verarbeitung meiner Daten zur Beantwortung meiner Anfrage zu. Weitere Informationen finden Sie in unserer <a href="#" onclick="return false">Datenschutzerklärung</a>.</span></label>
+          <div class="cb-err" id="cbe-m">Bitte stimmen Sie der Datenschutzerklärung zu.</div>
+          <button class="btn-sub" type="submit">Probetraining anfragen</button>
+        </form>
+        <p class="form-micro">Wir melden uns persönlich bei Ihnen, beantworten offene Fragen und schauen gemeinsam, ob ein Probetraining für Sie passend ist.</p>
+        <div class="form-trust">
+          <div class="fti">🔒 Daten sicher & vertraulich</div>
+          <div class="fti">✓ Kein Verkaufsgespräch</div>
+          <div class="fti">✓ Persönliche Begleitung</div>
+        </div>
+      </div>
+      <div class="fsuc" id="fs-m" role="status" aria-live="polite">
+        <div class="suc-ico">✓</div>
+        <h3 class="suc-h3">Vielen Dank für Ihre Anfrage</h3>
+        <p class="suc-p">Wir melden uns persönlich bei Ihnen und schauen gemeinsam, ob ein Probetraining für Sie der richtige nächste Schritt ist.</p>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /lp-m -->
+
+
+<script>
+'use strict';
+
+// ── VERSION TOGGLE ────────────────────────────────────────
+function switchLP(v) {
+  ['w','m'].forEach(id => {
+    document.getElementById('lp-' + id).classList.toggle('show', id === v);
+    const b = document.getElementById('btn-' + id);
+    b.classList.remove('on-w','on-m');
+    if (id === v) b.classList.add('on-' + v);
+    b.setAttribute('aria-pressed', id === v ? 'true' : 'false');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── SCROLL TO QUIZ ────────────────────────────────────────
+function startQuiz(p) {
+  document.getElementById('qpb-' + p).classList.add('on');
+  const anchor = document.getElementById('qa-' + p);
+  const top = anchor.getBoundingClientRect().top + window.scrollY - 110;
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
+// ── QUIZ CONTROLLER ───────────────────────────────────────
+class Quiz {
+  constructor(p, total) {
+    this.p = p; this.total = total; this.cur = 1;
+    this.answers = {}; this._timer = null;
+  }
+
+  sel(step, val, el) {
+    // Cancel any pending auto-advance (e.g. user changed mind quickly)
+    if (this._timer) { clearTimeout(this._timer); this._timer = null; }
+
+    // Deselect siblings, select clicked
+    el.closest('.a-list').querySelectorAll('.a-btn').forEach(b => b.classList.remove('sel'));
+    el.classList.add('sel');
+    this.answers[step] = val;
+
+    // Auto-advance after brief confirmation pause
+    this._timer = setTimeout(() => {
+      this._timer = null;
+      if (step >= this.total) { this.res(); }
+      else { this.nxt(step); }
+    }, 360);
+  }
+
+  nxt(step) {
+    if (step < this.total) this._go(step, step + 1);
+  }
+
+  prv(step) {
+    // Cancel any pending auto-advance
+    if (this._timer) { clearTimeout(this._timer); this._timer = null; }
+    if (step > 1) this._go(step, step - 1);
+  }
+
+  skp(step) {
+    if (this._timer) { clearTimeout(this._timer); this._timer = null; }
+    this.answers[step] = 'skip';
+    this.nxt(step);
+  }
+
+  res() {
+    populateResults(this.p, this.answers);
+    document.getElementById('qs-' + this.p).style.display = 'none';
+    document.getElementById('qpb-' + this.p).style.display = 'none';
+    const rs = document.getElementById('rs-' + this.p);
+    rs.classList.add('on');
+    setTimeout(() => rs.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  }
+
+  _go(from, to) {
+    document.getElementById(this.p + '-s' + from).classList.remove('on');
+    this.cur = to;
+    document.getElementById(this.p + '-s' + to).classList.add('on');
+    this._upd();
+    const sec = document.getElementById('qs-' + this.p);
+    window.scrollTo({ top: sec.getBoundingClientRect().top + window.scrollY - 110, behavior: 'smooth' });
+  }
+
+  _upd() {
+    const pct = Math.round((this.cur - 1) / this.total * 100);
+    document.getElementById('qpb-' + this.p + '-fill').style.width = pct + '%';
+    document.getElementById('qpb-' + this.p + '-lbl').textContent = 'Frage ' + this.cur + ' von ' + this.total;
+    document.getElementById('qpb-' + this.p + '-pct').textContent = pct + ' %';
+    document.getElementById('qpb-' + this.p).setAttribute('aria-valuenow', pct);
+  }
+}
+
+const Q = { w: new Quiz('w', 6), m: new Quiz('m', 6) };
+
+// ── PERSONALIZED RESULT TEXT GENERATION ──────────────────
+
+function populateResults(p, a) {
+  if (p === 'w') {
+    // ── Card 1: Blase & Beckenorgane – Q1 + Q3 (Organsenkung) + Q2 ──
+    const blase = {
+      a: 'Sie beschreiben keine Beschwerden beim Husten, Niesen oder Laufen – das ist eine gute Ausgangslage.',
+      b: 'Sie geben an, dass es selten und nur bei sehr starker Belastung vorkommt. Das kann ein erster Hinweis auf eine beginnende Belastungssymptomatik sein.',
+      c: 'Was Sie beschrieben haben, kann ein Hinweis auf eine sogenannte Belastungssymptomatik sein – das bedeutet, Harn kann unter bestimmten Belastungen verloren gehen.',
+      d: 'Ihre Angaben geben deutliche Hinweise, dass die Blasenfunktion ein relevantes Thema für Sie ist. Das kommt häufiger vor als man denkt – und lässt sich gut angehen.'
+    };
+    let t1 = blase[a[1]] || 'Ihre Angaben zu diesem Bereich geben erste Hinweise.';
+
+    if (a[3] === 'c' || a[3] === 'd') {
+      t1 += a[3] === 'd'
+        ? ' Zusätzlich haben Sie ein deutliches Fremdkörpergefühl angegeben – das kann ein Hinweis auf eine Organsenkung sein, bei der der Beckenboden die Organe nicht mehr vollständig stützt.'
+        : ' Außerdem haben Sie einen gynäkologischen Hinweis auf eine Organsenkung erwähnt. Beckenbodentraining kann hier präventiv und unterstützend wirken.';
+    } else if (a[3] === 'b') {
+      t1 += ' Sie berichten auch von gelegentlichem Druckgefühl nach unten – das kann ein erstes Zeichen sein, das wir gemeinsam einordnen können.';
+    }
+
+    if (a[2] === 'a') t1 += ' Als Frau mit Geburtserfahrung hängen Blase, Organlage und Beckenboden immer eng zusammen.';
+    else if (a[2] === 'b') t1 += ' Auch leichte Veränderungen nach einer Geburt können langfristig eine Rolle spielen.';
+
+    t1 += (a[1] === 'a')
+      ? ' Gezieltes Beckenbodentraining kann diese Funktion langfristig erhalten.'
+      : ' Gemeinsam schauen wir beim Probetraining, ob das Training zu Ihrem Thema passt.';
+
+    document.getElementById('rct-w-1').textContent = t1;
+
+    // ── Card 2: Rücken & Stabilität – Q4 ──
+    const rucken = {
+      a: 'Ihren Rücken beschreiben Sie als gut – eine gute Ausgangslage. Beckenbodentraining kann diese Stärke präventiv erhalten: Der Beckenboden ist das Fundament, das den gesamten Rumpf stützt und zusammenhält.',
+      b: 'Sie berichten von gelegentlichen Rückenbeschwerden. Da Beckenboden und Rückenmuskulatur direkt miteinander verbunden sind, kann eine zu schwache Beckenbodenmuskulatur Haltungsfehler und Rückenschmerzen verursachen.',
+      c: 'Sie haben angegeben, dass Rückenbeschwerden häufiger auftreten. Eine zu schwache Beckenbodenmuskulatur verursacht häufig auch eine zu schwache Rückenmuskulatur – gezieltes Training kann diesen Zusammenhang positiv beeinflussen.',
+      d: 'Sie beschreiben starke Rückenbeschwerden, die Ihren Alltag einschränken. Da Beckenboden und Rückenmuskulatur eng verbunden sind, kann ein Probetraining erste Hinweise geben, wie gezielte Impulse bei Ihnen wirken.'
+    };
+    document.getElementById('rct-w-2').textContent =
+      rucken[a[4]] || 'Beckenboden und Rücken arbeiten immer zusammen. Der Beckenboden ist das Fundament – fehlt die Kraft dort, kann der Rücken nicht gehalten werden.';
+
+    // ── Card 3: Körpergefühl & Intimität – Q5 ──
+    const sexualitaet = {
+      a: 'Sie beschreiben keine Veränderungen in Ihrem Körpergefühl oder Ihrer Intimität – das ist gut. Das Probetraining bietet dennoch einen interessanten Einstieg, um die Beckenbodenmuskulatur bewusst kennenzulernen.',
+      b: 'Sie geben an, Ihren Partner nicht mehr so gut zu spüren wie früher. Viele Frauen wissen nicht, dass der Beckenboden maßgeblich für die Qualität der Sexualität ist. Gezieltes Training kann durch bessere Durchblutung und Muskelkraft hier einen spürbaren Unterschied machen.',
+      c: 'Sie berichten von Schmerzen beim Sex. Das hängt oft mit einer Verspannung oder mangelnder Durchblutung der Beckenbodenmuskulatur zusammen – und lässt sich durch gezieltes Training positiv beeinflussen.',
+      d: 'Sie beschreiben, dass Ihre Orgasmen nicht mehr so intensiv sind wie früher. Der Beckenboden hat aufgrund mangelnder Durchblutung an Empfindlichkeit verloren – gezieltes Training kann die Sensibilität und Intensität wieder verbessern.',
+      skip: 'Viele Frauen berichten, dass bewusstes Beckenbodentraining ihr Körpergefühl positiv beeinflussen kann. Das Probetraining bietet einen diskreten, persönlichen Einstieg – ganz in Ihrem eigenen Tempo.'
+    };
+    document.getElementById('rct-w-3').textContent =
+      sexualitaet[a[5]] || sexualitaet['skip'];
+
+    // ── Wunschzustand (Q6): Karte hervorheben + Headline anpassen ──
+    ['rc-w-1','rc-w-2','rc-w-3'].forEach(id => document.getElementById(id).classList.remove('hl'));
+    const hlMap = { a: 'rc-w-1', b: 'rc-w-2', c: 'rc-w-3' };
+    if (hlMap[a[6]]) document.getElementById(hlMap[a[6]]).classList.add('hl');
+    const h2w = {
+      a: 'Ihr Wunsch: wieder unbeschwert aktiv sein',
+      b: 'Ihr Wunsch: mehr Stabilität und weniger Rückenbeschwerden',
+      c: 'Ihr Wunsch: mehr Körpergefühl und Wohlbefinden',
+      d: 'Ihre Antworten geben Hinweise auf drei Bereiche'
+    };
+    document.getElementById('rs-h2-w').innerHTML =
+      (h2w[a[6]] || h2w['d']) + '<br><span style="font-size:0.72em;font-weight:400;opacity:0.75">Hier sind die Bereiche, die für Sie relevant sein könnten</span>';
+
+  } else {
+    // ── MÄNNER ──
+
+    // ── Card 1: Blase – Q1 ──
+    const blase = {
+      a: 'Ihre Blasenkontrolle beschreiben Sie als sehr gut. Gezieltes Beckenbodentraining kann diese Funktion langfristig erhalten – wir schauen gemeinsam, ob das für Sie sinnvoll sein könnte.',
+      b: 'Sie geben gelegentlich dringenden Harndrang an. Das kann ein Hinweis auf eine sogenannte Drangsymptomatik sein – die Blase sendet häufiger und dringlicher, als sie eigentlich müsste.',
+      c: 'Was Sie beschrieben haben, kann ein Hinweis auf eine Drangsymptomatik oder Nykturie sein. Der Beckenboden sitzt direkt unter der Blase – verliert er Spannkraft, kann die Blase häufiger und dringlicher reagieren.',
+      d: 'Ihre Angaben geben deutliche Hinweise, dass die Blasenfunktion ein relevantes Thema für Sie ist. Das kommt häufiger vor als gedacht, und lässt sich mit gezieltem Training gut angehen.'
+    };
+    document.getElementById('rct-m-1').textContent =
+      blase[a[1]] || 'Ihre Angaben zu diesem Bereich geben Hinweise, die wir gemeinsam einordnen können.';
+
+    // ── Card 2: Prostata & Regeneration – Q3 + Q4 (Potenz) ──
+    const prostata = {
+      a: 'Sie berichten, dass Prostata-bezogene Themen bisher kein Thema waren – das ist positiv. Beckenbodentraining kann präventiv sinnvoll sein und die Funktion langfristig unterstützen.',
+      b: 'Sie geben an, leichte Hinweise im Prostata-Bereich zu beobachten. Beckenbodentraining kann hier unterstützend wirken – gemeinsam schauen wir, was zu Ihrer Situation passt.',
+      c: 'Sie haben angegeben, dass Ihr Urologe bereits Maßnahmen empfohlen hat. Gezieltes Beckenbodentraining kann ärztliche Empfehlungen ergänzend unterstützen.',
+      d: 'Sie haben angegeben, dass eine Prostatektomie stattgefunden hat oder bevorsteht. Beckenbodentraining spielt bei der Regeneration eine wichtige Rolle – gerade für Kontinenz und Erektionsfähigkeit danach.',
+      skip: 'Beckenbodentraining kann nach prostatabezogenen Eingriffen oder präventiv sinnvoll sein. Ein Probetraining gibt Ihnen einen ersten Eindruck.'
+    };
+    let t2 = prostata[a[3]] || prostata['skip'];
+
+    if (a[4] === 'b') t2 += ' Zusätzlich geben Sie an, dass die Erektionssicherheit nachgelassen hat. Der Beckenboden ist entscheidend, um eine Erektion auch halten zu können – gezieltes Training kann hier direkt ansetzen.';
+    else if (a[4] === 'c') t2 += ' Sie beschreiben auch eine nachlassende Erektionsqualität. Der Beckenboden „schließt die Schleusen", um das Blut im Schwellkörper zu halten – mit gezieltem Training lässt sich das positiv beeinflussen.';
+    else if (a[4] === 'd') t2 += ' Das Thema Potenz beschäftigt Sie. Das ist häufiger als man denkt – und hängt direkt mit der Kraft und Durchblutung des Beckenbodens zusammen.';
+
+    document.getElementById('rct-m-2').textContent = t2;
+
+    // ── Card 3: Stabilität, Rücken & Vitalität – Q2 + Q5 (Alltag) ──
+    const ruecken = {
+      a: 'Ihren Rücken beschreiben Sie als gut – eine gute Ausgangslage. Der Beckenboden ist das Fundament, das Ihren gesamten Rumpf stützt.',
+      b: 'Sie berichten von gelegentlichen Rückenbeschwerden. Eine zu schwache Beckenbodenmuskulatur kann Haltungsfehler und in der Folge Rückenschmerzen verursachen.',
+      c: 'Sie haben häufige Rückenbeschwerden angegeben. Da Beckenboden und Rückenmuskulatur direkt verbunden sind, kann gezieltes Training einen spürbaren Beitrag leisten.',
+      d: 'Sie beschreiben starke Rückenbeschwerden, die Ihren Alltag einschränken. Der Beckenboden als Fundament des Körpers spielt hier eine zentrale Rolle – ein Probetraining zeigt, wie gezielte Impulse bei Ihnen wirken.'
+    };
+    let t3 = ruecken[a[2]] || 'Ihr Rücken und Ihre Körperstabilität hängen direkt mit dem Beckenboden zusammen.';
+
+    if (a[5] === 'a') t3 += ' Vorwiegend sitzender Alltag kann den Beckenboden belasten und schwächen – gezielte Aktivierung ist hier besonders sinnvoll.';
+    else if (a[5] === 'c') t3 += ' Regelmäßiger Sport ist gut – wichtig ist dabei auch, dass der Beckenboden gezielt trainiert wird, um Belastungen standzuhalten.';
+    else if (a[5] === 'd') t3 += ' Bei wechselhafter Belastung ist ein gut trainierter Beckenboden als stabiles Fundament besonders wertvoll.';
+
+    t3 += ' Gemeinsam schauen wir beim Probetraining, wie Ihr Körper auf gezielte Impulse reagiert.';
+    document.getElementById('rct-m-3').textContent = t3;
+
+    // ── Wunschzustand (Q6): Karte hervorheben + Headline anpassen ──
+    ['rc-m-1','rc-m-2','rc-m-3'].forEach(id => document.getElementById(id).classList.remove('hl'));
+    const hlMapM = { a: 'rc-m-1', b: 'rc-m-3', c: 'rc-m-2' };
+    if (hlMapM[a[6]]) document.getElementById(hlMapM[a[6]]).classList.add('hl');
+    const h2m = {
+      a: 'Ihr Wunsch: wieder unbeschwert aktiv sein',
+      b: 'Ihr Wunsch: mehr Stabilität und körperliche Kraft',
+      c: 'Ihr Wunsch: mehr Vitalität und Zuversicht',
+      d: 'Ihre Antworten geben Hinweise auf drei Bereiche'
+    };
+    document.getElementById('rs-h2-m').innerHTML =
+      (h2m[a[6]] || h2m['d']) + '<br><span style="font-size:0.72em;font-weight:400;opacity:0.75">Hier sind die Bereiche, die für Sie relevant sein könnten</span>';
+  }
+}
+
+// ── FORM SUBMISSION ───────────────────────────────────────
+function doSubmit(e, p) {
+  e.preventDefault();
+  let ok = true;
+
+  const vn = document.getElementById(p + '-vn');
+  const ffVn = document.getElementById('ff-' + p + '-vn');
+  ffVn.classList.toggle('err', !vn.value.trim());
+  if (!vn.value.trim()) ok = false;
+
+  const tel = document.getElementById(p + '-tel');
+  const ffTel = document.getElementById('ff-' + p + '-tel');
+  ffTel.classList.toggle('err', !tel.value.trim());
+  if (!tel.value.trim()) ok = false;
+
+  const ds = document.getElementById(p + '-ds');
+  const cbe = document.getElementById('cbe-' + p);
+  if (!ds.checked) { cbe.style.display = 'block'; ok = false; }
+  else { cbe.style.display = 'none'; }
+
+  if (!ok) {
+    const firstErr = document.querySelector('#fw-' + p + ' .err input, #fw-' + p + ' .err select');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Freeze scroll position before layout change to prevent mobile jump
+  const y = window.scrollY;
+  document.getElementById('fw-' + p).style.display = 'none';
+  document.getElementById('fs-' + p).classList.add('on');
+  // Restore after browser reflow
+  requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, y)));
+}
+
+// Live validation reset on input
+['w','m'].forEach(p => {
+  ['vn','tel'].forEach(f => {
+    const el = document.getElementById(p + '-' + f);
+    if (el) el.addEventListener('input', () => document.getElementById('ff-' + p + '-' + f).classList.remove('err'));
+  });
+  const ds = document.getElementById(p + '-ds');
+  if (ds) ds.addEventListener('change', () => {
+    if (ds.checked) document.getElementById('cbe-' + p).style.display = 'none';
+  });
+});
+</script>
+</body>
+</html>
