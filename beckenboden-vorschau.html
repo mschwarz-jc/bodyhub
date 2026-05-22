@@ -95,15 +95,25 @@
       display: block; pointer-events: none; user-select: none;
       z-index: 1;
     }
-    /* White bg on PelviPower dummies disappears via multiply */
-    .lp-w .hero-device,
-    .lp-m .hero-device { mix-blend-mode: multiply; }
+    /* PelviPower: dark vignette bottom-right matches image edge */
+    .lp-w .hero {
+      background:
+        radial-gradient(ellipse 70% 60% at 92% 100%, rgba(16,10,6,0.52) 0%, transparent 68%),
+        var(--hbg);
+    }
+    .lp-m .hero {
+      background:
+        radial-gradient(ellipse 70% 60% at 92% 100%, rgba(6,10,18,0.52) 0%, transparent 68%),
+        var(--hbg);
+    }
 
     /* reLounge: full-width luxury bottom shot */
     .lp-r .hero {
       background: #09090B;
-      align-items: flex-start;
-      padding-top: 44px;
+      align-items: center;
+      justify-content: center;
+      padding-top: 36px;
+      padding-bottom: 40vh;
     }
     .lp-r .hero-in { padding-bottom: 0; }
     .lp-r .hero-device {
@@ -111,9 +121,9 @@
       bottom: 0; left: 50%; right: auto;
       transform: translateX(-50%);
       width: 100%; max-width: 100%;
-      height: 52vh;
+      height: 44vh;
       object-fit: cover;
-      object-position: center 62%;
+      object-position: center 70%;
       mix-blend-mode: normal;
     }
     /* Gradient so text stays readable, image fades in below */
@@ -121,9 +131,9 @@
       content: '';
       position: absolute; inset: 0;
       background: linear-gradient(to bottom,
-        #09090B 28%,
-        rgba(9,9,11,0.78) 52%,
-        rgba(9,9,11,0.18) 78%,
+        #09090B 22%,
+        rgba(9,9,11,0.72) 48%,
+        rgba(9,9,11,0.12) 72%,
         transparent 100%
       );
       pointer-events: none; z-index: 1;
