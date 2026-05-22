@@ -102,39 +102,116 @@
       mask-image: radial-gradient(ellipse 80% 78% at 58% 56%, black 28%, transparent 100%);
     }
 
-    /* reLounge: image absolute at bottom, text centered overlaps image top */
+    /* ── RELOUNGE HERO: BASE (Bild unten) ── */
     .lp-r .hero {
       background: #09090B;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      padding: 44px 24px;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 52px 24px 0;
     }
     .lp-r .hero-in {
       padding-bottom: 0;
       position: relative; z-index: 2;
+      width: 100%;
     }
     .lp-r .hero-device {
       position: absolute;
-      bottom: 0; left: 50%; right: auto;
+      bottom: 0; top: auto;
+      left: 50%; right: auto;
       transform: translateX(-50%);
       width: 100%; max-width: 100%;
-      height: 56vh;
+      height: 54vh;
       object-fit: cover;
       object-position: center 30%;
       z-index: 0;
     }
-    /* Gradient: solid dark at top → fades out, so text reads over image */
+    /* Bild unten: gradient top→down schützt den Text oben */
     .lp-r .hero::after {
       content: '';
       position: absolute; inset: 0;
       background: linear-gradient(to bottom,
-        #09090B 12%,
-        rgba(9,9,11,0.82) 38%,
-        rgba(9,9,11,0.28) 62%,
+        #09090B 14%,
+        rgba(9,9,11,0.86) 38%,
+        rgba(9,9,11,0.32) 62%,
         transparent 100%
       );
       pointer-events: none; z-index: 1;
+    }
+
+    /* ── RELOUNGE: Bild oben ── */
+    .lp-r[data-layout="top"] .hero {
+      padding: 0 24px 0;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    .lp-r[data-layout="top"] .hero-device {
+      top: 0; bottom: auto;
+    }
+    /* Text startet bei 65% der Bildhhöhe → überlappt unteres Drittel */
+    .lp-r[data-layout="top"] .hero-in {
+      margin-top: calc(54vh * 0.65);
+      padding-bottom: 48px;
+    }
+    /* Gradient bottom→up schützt den Text über der Liege */
+    .lp-r[data-layout="top"] .hero::after {
+      background: linear-gradient(to top,
+        #09090B 14%,
+        rgba(9,9,11,0.86) 38%,
+        rgba(9,9,11,0.30) 60%,
+        transparent 100%
+      );
+    }
+
+    /* ── PREVIEW CONTROLS (nur Desktop) ── */
+    .preview-controls { display: none; }
+    @media (min-width: 900px) {
+      .preview-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        position: fixed;
+        right: 28px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(18,18,22,0.94);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 20px 16px;
+        z-index: 9000;
+        width: 170px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      }
+      .ctrl-title {
+        font-size: 9px; font-weight: 700; letter-spacing: 1.4px;
+        text-transform: uppercase; color: rgba(255,255,255,0.28);
+        margin-bottom: 2px;
+      }
+      .ctrl-section { display: flex; flex-direction: column; gap: 7px; }
+      .ctrl-label {
+        font-size: 11px; font-weight: 500;
+        color: rgba(255,255,255,0.55);
+      }
+      .ctrl-row { display: flex; flex-direction: column; gap: 5px; }
+      .ctrl-btn {
+        font-size: 12px; font-family: inherit;
+        padding: 7px 12px; border-radius: 9px; text-align: left;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.5);
+        cursor: pointer; transition: all 0.15s;
+      }
+      .ctrl-btn:hover { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.85); }
+      .ctrl-btn.on {
+        background: rgba(255,255,255,0.16);
+        color: #fff;
+        border-color: rgba(255,255,255,0.22);
+      }
+      .ctrl-divider {
+        height: 1px; background: rgba(255,255,255,0.07);
+        margin: 2px 0;
+      }
     }
     .h-badge {
       display: inline-flex; align-items: center; gap: 7px;
@@ -565,6 +642,29 @@
 
 </div><!-- /phone-frame -->
 </div><!-- /phone-shell -->
+
+<!-- ═══ PREVIEW CONTROLS (Desktop only) ═══ -->
+<div class="preview-controls" id="preview-controls">
+  <div class="ctrl-title">Vorschau-Optionen</div>
+
+  <div class="ctrl-section">
+    <div class="ctrl-label">PelviPower Bild</div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn on" onclick="ctrlPelvi(true,this)">✓ Sichtbar</button>
+      <button class="ctrl-btn" onclick="ctrlPelvi(false,this)">Ausblenden</button>
+    </div>
+  </div>
+
+  <div class="ctrl-divider"></div>
+
+  <div class="ctrl-section">
+    <div class="ctrl-label">reLounge Layout</div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn on" onclick="ctrlRelounge('bottom',this)">Bild unten</button>
+      <button class="ctrl-btn" onclick="ctrlRelounge('top',this)">Bild oben</button>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ══════════════════════════════════════════════════════
@@ -1032,6 +1132,22 @@ function switchLP(v) {
 function closeAll() {
   BB.close();
   RQ.close();
+}
+
+function ctrlPelvi(show, btn) {
+  document.querySelectorAll('.lp-w .hero-device, .lp-m .hero-device')
+    .forEach(el => el.style.display = show ? '' : 'none');
+  btn.closest('.ctrl-row').querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  btn.textContent = show ? '✓ Sichtbar' : '✓ Ausblenden';
+  btn.closest('.ctrl-row').querySelector('.ctrl-btn:not(.on)').textContent =
+    show ? 'Ausblenden' : 'Sichtbar';
+}
+
+function ctrlRelounge(layout, btn) {
+  document.querySelector('.lp-r').dataset.layout = layout;
+  btn.closest('.ctrl-row').querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
 }
 </script>
 </body>
