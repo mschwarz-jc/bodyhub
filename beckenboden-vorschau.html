@@ -491,13 +491,8 @@
         scrollbar-width: none;
       }
       .phone-frame::-webkit-scrollbar { display: none; }
-      .phone-frame .lp { margin-top: 0; min-height: min(852px, calc(100dvh - 200px)); }
-      .phone-frame .hero { min-height: min(852px, calc(100dvh - 200px)); }
-
-      /* Phone scales to fit smaller screens */
-      @media (max-height: 980px) {
-        .phone-frame { height: calc(100dvh - 200px); }
-      }
+      .phone-frame .lp { margin-top: 0; min-height: 852px; }
+      .phone-frame .hero { min-height: 852px; }
     }
 
     /* ── FRAGEN-REVIEW PANEL ── */
