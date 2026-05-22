@@ -412,6 +412,12 @@
     .score-rec-txt { font-size: 15px; font-weight: 600; color: var(--tx); line-height: 1.45; }
     .score-desc { font-size: 14px; color: var(--txl); line-height: 1.68; margin-bottom: 22px; }
 
+    /* ── BILDER AUSBLENDEN bei kleinem Screen (mobil) ── */
+    @media (max-width: 899px) and (max-height: 680px),
+           (max-width: 899px) and (max-width: 340px) {
+      .hero-device { display: none !important; }
+    }
+
     /* ── BREAKPOINTS (min-width = mobile first) ── */
     @media (min-width: 560px) {
       .btn-p { width: auto; display: inline-flex; }
