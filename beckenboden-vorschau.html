@@ -95,48 +95,33 @@
       display: block; pointer-events: none; user-select: none;
       z-index: 1;
     }
-    /* PelviPower: dark vignette bottom-right matches image edge */
-    .lp-w .hero {
-      background:
-        radial-gradient(ellipse 70% 60% at 92% 100%, rgba(16,10,6,0.52) 0%, transparent 68%),
-        var(--hbg);
-    }
-    .lp-m .hero {
-      background:
-        radial-gradient(ellipse 70% 60% at 92% 100%, rgba(6,10,18,0.52) 0%, transparent 68%),
-        var(--hbg);
-    }
+    /* PelviPower: light bg → multiply removes it, blue glow stays */
+    .lp-w .hero-device,
+    .lp-m .hero-device { mix-blend-mode: multiply; }
 
-    /* reLounge: full-width luxury bottom shot */
+    /* reLounge: flex-column → Text oben, Bild unten, beides zusammen zentriert */
     .lp-r .hero {
       background: #09090B;
-      align-items: center;
+      flex-direction: column;
+      align-items: stretch;
       justify-content: center;
-      padding-top: 36px;
-      padding-bottom: 40vh;
+      padding: 44px 24px 0;
+      gap: 0;
     }
-    .lp-r .hero-in { padding-bottom: 0; }
+    .lp-r .hero-in {
+      padding-bottom: 32px;
+      flex: 0 0 auto;
+    }
     .lp-r .hero-device {
-      position: absolute;
-      bottom: 0; left: 50%; right: auto;
-      transform: translateX(-50%);
+      position: static;
+      bottom: auto; right: auto; left: auto;
+      transform: none;
       width: 100%; max-width: 100%;
-      height: 44vh;
+      height: 40vh;
       object-fit: cover;
-      object-position: center 70%;
+      object-position: center 68%;
       mix-blend-mode: normal;
-    }
-    /* Gradient so text stays readable, image fades in below */
-    .lp-r .hero::after {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom,
-        #09090B 22%,
-        rgba(9,9,11,0.72) 48%,
-        rgba(9,9,11,0.12) 72%,
-        transparent 100%
-      );
-      pointer-events: none; z-index: 1;
+      flex-shrink: 0;
     }
     .h-badge {
       display: inline-flex; align-items: center; gap: 7px;
