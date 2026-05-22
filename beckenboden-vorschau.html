@@ -34,13 +34,14 @@
     .tog.on-w { background: #C4956A; color: #fff; }
     .tog.on-m { background: #1E5F8E; color: #fff; }
     .tog.on-r { background: #A08B6E; color: #fff; }
+    .tog.on-q { background: #3D6B4F; color: #fff; }
 
     /* ── PHONE SHELL / FRAME ── */
     .phone-shell { width: 100%; }
     .phone-frame { width: 100%; position: relative; overflow: hidden; }
 
     /* ── LP CONTAINERS ── */
-    .lp { margin-top: 49px; display: none; min-height: calc(100svh - 49px); }
+    .lp { margin-top: 49px; display: none; min-height: calc(100dvh - 49px); }
     .lp.show { display: block; }
 
     /* ── THEME VARIABLES ── */
@@ -77,7 +78,7 @@
       background: var(--hbg);
       display: flex; align-items: center; justify-content: center;
       padding: 36px 24px 0;
-      min-height: calc(100svh - 49px);
+      min-height: calc(100dvh - 49px);
       position: relative; overflow: hidden;
     }
     .hero-in {
@@ -418,7 +419,7 @@
     @media (min-width: 640px) {
       /* Modal: centered card */
       .q-modal { align-items: center; padding: 24px; }
-      .q-wrap { max-width: 620px; border-radius: 20px; max-height: calc(100svh - 80px); box-shadow: 0 28px 80px rgba(0,0,0,0.22), 0 8px 24px rgba(0,0,0,0.1); }
+      .q-wrap { max-width: 620px; border-radius: 20px; max-height: calc(100dvh - 80px); box-shadow: 0 28px 80px rgba(0,0,0,0.22), 0 8px 24px rgba(0,0,0,0.1); }
       .q-body { padding: 28px 30px 22px; }
       .q-foot { padding: 14px 30px 22px; }
       .q-text { font-size: 19px; }
@@ -484,8 +485,80 @@
         scrollbar-width: none;
       }
       .phone-frame::-webkit-scrollbar { display: none; }
-      .phone-frame .lp { margin-top: 0; min-height: 852px; }
-      .phone-frame .hero { min-height: 852px; }
+      .phone-frame .lp { margin-top: 0; min-height: min(852px, calc(100dvh - 200px)); }
+      .phone-frame .hero { min-height: min(852px, calc(100dvh - 200px)); }
+
+      /* Phone scales to fit smaller screens */
+      @media (max-height: 980px) {
+        .phone-frame { height: calc(100dvh - 200px); }
+      }
+    }
+
+    /* ── FRAGEN-REVIEW PANEL ── */
+    .review-panel {
+      display: none;
+    }
+    @media (min-width: 900px) {
+      .review-panel {
+        width: min(860px, calc(100vw - 60px));
+        margin: 0 auto;
+        padding-bottom: 80px;
+      }
+      .review-panel.show { display: block; }
+      .rp-header {
+        background: #fff; border-radius: 16px; padding: 28px 32px 24px;
+        margin-bottom: 24px; border: 1px solid #E8E8EC;
+        display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      }
+      .rp-title { font-size: 20px; font-weight: 600; color: #1A1A1E; }
+      .rp-subtitle { font-size: 13px; color: #888; margin-top: 3px; }
+      .rp-export-btn {
+        flex-shrink: 0; padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer;
+        background: #3D6B4F; color: #fff; font-size: 14px; font-family: inherit; font-weight: 600;
+        transition: background 0.18s; white-space: nowrap;
+      }
+      .rp-export-btn:hover { background: #2E5540; }
+      .rp-section {
+        background: #fff; border-radius: 16px; border: 1px solid #E8E8EC;
+        margin-bottom: 20px; overflow: hidden;
+      }
+      .rp-section-head {
+        padding: 18px 24px; border-bottom: 1px solid #F0F0F4;
+        display: flex; align-items: center; gap: 12px;
+      }
+      .rp-section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+      .rp-section-label { font-size: 15px; font-weight: 600; color: #1A1A1E; }
+      .rp-group { padding: 6px 0; }
+      .rp-group-lbl {
+        padding: 10px 24px 6px;
+        font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #AAAABC;
+      }
+      .rp-q {
+        display: flex; align-items: flex-start; gap: 14px;
+        padding: 12px 24px; border-bottom: 1px solid #F5F5F8;
+        cursor: pointer; transition: background 0.12s;
+      }
+      .rp-q:last-child { border-bottom: none; }
+      .rp-q:hover { background: #FAFAFA; }
+      .rp-cb {
+        width: 18px; height: 18px; border-radius: 5px;
+        border: 2px solid #D0D0DA; flex-shrink: 0; margin-top: 2px;
+        appearance: none; -webkit-appearance: none; cursor: pointer;
+        transition: all 0.15s; background: #fff;
+      }
+      .rp-cb:checked { background: #3D6B4F; border-color: #3D6B4F; }
+      .rp-cb:checked::after {
+        content: '✓'; display: block; color: #fff;
+        font-size: 11px; font-weight: 700; text-align: center; line-height: 14px;
+      }
+      .rp-q-text { flex: 1; }
+      .rp-q-q { font-size: 14px; color: #1A1A1E; font-weight: 500; line-height: 1.45; margin-bottom: 4px; }
+      .rp-q-opts { font-size: 12px; color: #888; }
+      .rp-new-badge {
+        flex-shrink: 0; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+        text-transform: uppercase; color: #3D6B4F; background: #E8F2ED;
+        padding: 2px 8px; border-radius: 100px; margin-top: 3px;
+      }
     }
   </style>
 </head>
@@ -499,6 +572,7 @@
     <button class="tog on-w" data-v="w" onclick="switchLP('w')">Frauen</button>
     <button class="tog" data-v="m" onclick="switchLP('m')">Männer</button>
     <button class="tog" data-v="r" onclick="switchLP('r')">Rücken</button>
+    <button class="tog" data-v="q" onclick="switchLP('q')">Fragen</button>
   </div>
 </div>
 
@@ -643,6 +717,9 @@
 
 </div><!-- /phone-frame -->
 </div><!-- /phone-shell -->
+
+<!-- ═══ FRAGEN-REVIEW PANEL ═══ -->
+<div class="review-panel" id="review-panel"></div>
 
 <!-- ═══ PREVIEW CONTROLS (Desktop only) ═══ -->
 <div class="preview-controls" id="preview-controls">
@@ -1121,12 +1198,21 @@ const RQ = {
    LP SWITCH
 ══════════════════════════════════════════════════════ */
 function switchLP(v) {
+  const isQ = v === 'q';
   document.querySelectorAll('.lp').forEach(el => el.classList.remove('show'));
   document.querySelectorAll('.tog').forEach(el => {
     el.className = 'tog';
     if (el.dataset.v === v) el.classList.add('on-' + v);
   });
-  document.querySelector('.lp-' + v).classList.add('show');
+  document.getElementById('review-panel').classList.toggle('show', isQ);
+  document.getElementById('preview-controls').style.display = isQ ? 'none' : '';
+  const shell = document.querySelector('.phone-shell');
+  if (shell) shell.style.display = isQ ? 'none' : '';
+  if (!isQ) {
+    document.querySelector('.lp-' + v).classList.add('show');
+  } else {
+    buildReviewPanel();
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1149,6 +1235,163 @@ function ctrlRelounge(layout, btn) {
   document.querySelector('.lp-r').dataset.layout = layout;
   btn.closest('.ctrl-row').querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
+}
+
+/* ══════════════════════════════════════════════════════
+   FRAGEN-REVIEW
+══════════════════════════════════════════════════════ */
+const REVIEW = {
+  w: {
+    label: 'Frauen · Beckenboden',
+    color: '#C4956A',
+    existing: [
+      { q:'Bei welcher Situation verlieren Sie manchmal Urin – oder ist das kein Thema?', opts:'Kein Thema / Bei Belastung (Husten, Niesen, Lachen, Sport) / Bei starkem Harndrang – muss sofort' },
+      { q:'Wie gut können Sie einen Harndrang im Alltag kontrollieren?', opts:'Gut – kein Druck / Manchmal dringend, auch nachts / Oft schwierig – kaum aufschiebbar' },
+      { q:'Wie häufig kommt es zu ungewolltem Urinverlust?', opts:'Selten oder nie / 1–2× pro Woche / Täglich oder öfter' },
+      { q:'Haben Sie Kinder geboren, und hat sich danach etwas verändert?', opts:'Keine Kinder / Kaiserschnitt ohne spürbare Folgen / Vaginalgeburt – mit Veränderungen' },
+      { q:'Kennen Sie das Gefühl eines Drucks nach unten oder hat Ihre Ärztin eine Organsenkung erwähnt?', opts:'Kein Thema / Gelegentliches Druckgefühl / Senkung bekannt oder deutliches Fremdkörpergefühl' },
+      { q:'Haben Sie Rückenschmerzen?', opts:'Selten oder keine / Gelegentlich, mittelstark / Häufig oder stark – schränkt ein' },
+      { q:'Wie zufrieden sind Sie mit Ihrem Körpergefühl und Ihrer Intimität?', opts:'Zufrieden, kein Thema / Spürbare Veränderungen (Intensität, Partnerwahrnehmung) / Schmerzen oder deutliche Einschränkungen' },
+      { q:'Wie sieht Ihr Alltag in Bezug auf Bewegung aus?', opts:'Vorwiegend sitzend, wenig Sport / Gemischt oder 1–2× Sport/Woche / Regelmäßig aktiv – 3×/Woche oder mehr' },
+      { q:'Haben Sie bereits etwas gegen Ihre Beschwerden unternommen?', opts:'Noch nichts probiert / Einzelne Maßnahmen (Physio, Übungen) / Mehreres versucht – bisher wenig Erfolg' },
+      { q:'Seit wann beschäftigt Sie das Thema?', opts:'Erst seit Kurzem (wenige Monate) / Schon länger als 1 Jahr / Nach einem Ereignis (Geburt, OP, Klimakterium)' },
+      { q:'Was würde sich für Sie am meisten verändern, wenn das Thema gelöst wäre?', opts:'Wieder unbeschwert aktiv – ohne Blasengedanken / Mehr Stabilität und weniger Rückenbeschwerden / Besseres Körpergefühl und Intimität' },
+    ],
+    proposed: [
+      { q:'Wie viel Wasser trinken Sie täglich?', opts:'Weniger als 1 Liter / 1–2 Liter / Mehr als 2 Liter' },
+      { q:'Wie oft gehen Sie tagsüber auf die Toilette?', opts:'4–6× (normal) / 7–9× / 10× oder öfter' },
+      { q:'Müssen Sie auch nachts auf die Toilette?', opts:'Nein / 1× pro Nacht / 2× oder öfter' },
+      { q:'Wie groß ist der Urinverlust, wenn er vorkommt?', opts:'Kein Verlust / Wenige Tropfen – kleine Menge / Mehr – ich brauche Einlagen' },
+      { q:'Verwenden Sie Einlagen zur Sicherheit?', opts:'Nein / Gelegentlich / Täglich' },
+      { q:'Haben Sie Geburtsverletzungen erlitten (z.B. Dammriss)?', opts:'Keine Kinder oder keine Verletzungen / Leichte Verletzung, gut verheilt / Dammriss oder Narben mit anhaltenden Folgen' },
+      { q:'Haben Sie das Gefühl, dass sich Ihre Situation stetig verschlechtert?', opts:'Nein, bleibt stabil / Eher gleich / Ja, es wird schlimmer' },
+      { q:'Haben Sie häufig Blasenentzündungen?', opts:'Nein / 1–2× im Jahr / Öfter als 2× im Jahr' },
+      { q:'Was beschäftigt Sie an Ihrem Thema am meisten?', opts:'Die körperliche Einschränkung im Alltag / Die soziale Unsicherheit (Ausflüge, Sport) / Die Auswirkung auf meine Intimität' },
+      { q:'Können Sie sich an einen bestimmten Auslöser für Ihre Beschwerden erinnern?', opts:'Nein, kam schleichend / Nach einer Geburt oder OP / Nach einer Hormonumstellung (Menopause, Pille)' },
+    ]
+  },
+  m: {
+    label: 'Männer · Beckenboden',
+    color: '#1E5F8E',
+    existing: [
+      { q:'Wie sicher ist Ihre Blasenkontrolle im Alltag?', opts:'Gut – keine Einschränkungen / Gelegentlich unkontrolliert oder Nachtröpfeln / Häufig herausfordernd – starker Drang oder Verlust' },
+      { q:'Wenn Sie Harndrang spüren – wie gut können Sie es aufschieben?', opts:'Kein Problem, gut kontrollierbar / Manchmal dringend, auch nachts / Kaum – muss sofort auf die Toilette' },
+      { q:'Wie häufig kommt es zu ungewolltem Urinverlust?', opts:'Selten oder nie / 1–2× pro Woche / Täglich oder öfter' },
+      { q:'Hat Ihr Urologe je etwas zur Prostata erwähnt?', opts:'Kein Thema / Leichte Hinweise, beobachte es / Prostataerkrankung bekannt oder Eingriff (geplant oder erlebt)' },
+      { q:'Haben Sie Rückenschmerzen?', opts:'Selten oder keine / Gelegentlich, mittelstark / Häufig oder stark – schränkt ein' },
+      { q:'Wie sieht Ihr Alltag in Bezug auf Bewegung aus?', opts:'Vorwiegend sitzend, wenig Sport / Gemischt oder 1–2× Sport/Woche / Regelmäßig aktiv – 3×/Woche oder mehr' },
+      { q:'Wie beurteilen Sie Ihre Erektionsfähigkeit und Sexualität?', opts:'Zufrieden, kein Thema / Erektion kommt zustande, aber unsicherer als früher / Erektion schwierig aufzubauen oder zu halten' },
+      { q:'Haben Sie bereits etwas gegen Ihre Beschwerden unternommen?', opts:'Noch nichts probiert / Einzelne Maßnahmen (Physiotherapie, Medikamente) / Mehreres versucht – bisher wenig Erfolg' },
+      { q:'Wie stark belastet Sie das Thema im Alltag?', opts:'Informiere mich nur / Merkliche Einschränkung / Erheblich – möchte dringend etwas ändern' },
+      { q:'Seit wann beschäftigt Sie das Thema?', opts:'Erst seit Kurzem / Schon länger als 1 Jahr / Nach einem Ereignis (OP, Erkrankung)' },
+      { q:'Was würde sich für Sie am meisten verändern?', opts:'Wieder unbeschwert aktiv – ohne Blasengedanken / Mehr Stabilität, Rückenkraft und Ausdauer / Mehr Vitalität und Zuversicht in Partnerschaft und Alltag / Kontinenz und Potenz nach Eingriff wiederherstellen' },
+    ],
+    proposed: [
+      { q:'Wie viel Wasser trinken Sie täglich?', opts:'Weniger als 1 Liter / 1–2 Liter / Mehr als 2 Liter' },
+      { q:'Wie oft gehen Sie tagsüber auf die Toilette?', opts:'4–6× (normal) / 7–9× / 10× oder öfter' },
+      { q:'Müssen Sie auch nachts auf die Toilette?', opts:'Nein / 1× pro Nacht / 2× oder öfter' },
+      { q:'Haben Sie das Gefühl, nach dem Wasserlassen tropft es noch nach?', opts:'Nein / Gelegentlich / Ja, regelmäßig' },
+      { q:'Haben Sie das Gefühl, dass sich Ihre Situation stetig verschlechtert?', opts:'Nein, bleibt stabil / Eher gleich / Ja, wird schlimmer' },
+      { q:'Wie würden Sie Ihren Berufsalltag beschreiben?', opts:'Vorwiegend sitzend / Vorwiegend stehend oder gehend / Körperlich aktiv, viel Heben' },
+      { q:'Wie würden Sie die Qualität Ihrer nächtlichen Erektionen einschätzen?', opts:'Gut, kein Thema / Spürbar verändert, aber vorhanden / Kaum noch oder gar nicht mehr' },
+      { q:'Mein Partner spürt mich nicht mehr so gut wie früher – trifft das zu?', opts:'Nein, kein Thema / Leichte Veränderungen bemerkt / Ja, deutliche Veränderung' },
+      { q:'Was beschäftigt Sie an Ihrem Thema am meisten?', opts:'Die Blasenkontrolle im Alltag / Die Auswirkung auf Vitalität und Sexualität / Die Unsicherheit nach einer OP' },
+      { q:'Wenn Sie sich etwas wünschen könnten – was wäre das?', opts:'Wieder unbeschwert Sport und Aktivitäten genießen / Mehr Sicherheit und Kontrolle im Alltag / Vitalität und Sexualität wie früher' },
+    ]
+  },
+  r: {
+    label: 'Rücken · reLounge',
+    color: '#A08B6E',
+    existing: [
+      { q:'Wo genau haben Sie Rückenschmerzen?', opts:'Nacken/Schultern oder ein einzelner Bereich / Lendenwirbelsäule oder Hüfte/Beine / Ganzer Rücken oder mehrere Bereiche' },
+      { q:'Wie oft haben Sie Schmerzen?', opts:'Selten – 1–2× im Monat / Mehrmals pro Woche / Täglich, nachts oder dauerhaft' },
+      { q:'Wie fühlt sich der Schmerz an?', opts:'Dumpf oder Verspannung / Stechend oder ziehend / Taubheitsgefühl oder Ausstrahlung in Bein/Arm' },
+      { q:'Wie stark sind die Schmerzen (1–10)?', opts:'Leicht 1–3 / Mittel 4–6 / Stark 7–10' },
+      { q:'Wie lange bestehen die Beschwerden schon?', opts:'Weniger als 3 Monate / 3 Monate bis 1 Jahr / Länger als 1 Jahr' },
+      { q:'Wie sehr schränken die Beschwerden Ihren Alltag ein?', opts:'Kaum – ich kann alles machen / Manchmal – bestimmte Aktivitäten meide ich / Stark – vieles ist nicht mehr möglich' },
+      { q:'Wann werden die Schmerzen schlimmer?', opts:'Bei Sport oder körperlicher Aktivität / Bei langem Sitzen oder Stehen / Auch in Ruhe oder nachts' },
+      { q:'Was haben Sie bisher dagegen unternommen?', opts:'Noch nichts oder gelegentlich Schmerzmittel / Einzelne Maßnahmen wie Massage oder Physio – mäßiger Erfolg / Vieles versucht – keine dauerhafte Lösung' },
+    ],
+    proposed: [
+      { q:'Strahlen Ihre Schmerzen irgendwohin aus (z.B. Bein oder Arm)?', opts:'Nein / Gelegentlich / Ja – Kribbeln oder Taubheitsgefühl' },
+      { q:'Werden Sie nachts durch den Schmerz wach?', opts:'Nein / Gelegentlich / Ja, regelmäßig' },
+      { q:'Nehmen Sie Schmerzmittel gegen Rückenbeschwerden?', opts:'Nein / Gelegentlich / Regelmäßig' },
+      { q:'Haben Sie eine ärztliche Diagnose oder Bildgebung (MRT/Röntgen) zum Rücken?', opts:'Nein / Ja – Verspannung oder Haltungsproblem / Ja – Bandscheibe, Arthrose oder ähnliches' },
+      { q:'Beschreiben Sie Ihren Berufsalltag:', opts:'Vorwiegend sitzend / Vorwiegend stehend oder gehend / Körperlich aktiv, viel Heben' },
+      { q:'Was verschlechtert Ihre Beschwerden konkret?', opts:'Langes Sitzen oder Stehen / Sport oder schweres Heben / Auch in Ruhe, bei Stress oder Gartenarbeit' },
+      { q:'Wie sehr beeinträchtigt das Problem Sie in Ihrem Leben (1–10)?', opts:'Gering 1–3 / Merklich 4–6 / Erheblich 7–10' },
+      { q:'Was belastet Sie an Ihrer Situation am meisten?', opts:'Ich kann bestimmte Aktivitäten nicht mehr ausüben / Die Angst, dass es schlimmer wird / Die Abhängigkeit von Schmerzmitteln' },
+      { q:'Wann war es das letzte Mal wirklich gut?', opts:'Vor weniger als einem Jahr / Vor 1–3 Jahren / Ich erinnere mich kaum noch daran' },
+      { q:'Was wäre Ihr absoluter Wunsch, wenn Ihr Rücken wieder gesund wäre?', opts:'Wieder uneingeschränkt Sport und Hobbys genießen / Ohne Schmerzen durch den Alltag / Wieder voll leistungsfähig – beruflich und privat' },
+    ]
+  }
+};
+
+function buildReviewPanel() {
+  const panel = document.getElementById('review-panel');
+  if (panel.dataset.built) return;
+  panel.dataset.built = '1';
+  let html = `<div class="rp-header">
+    <div>
+      <div class="rp-title">Fragen-Review · BodyHub Checkup</div>
+      <div class="rp-subtitle">Aktuelle Fragen angehakt · Neue Vorschläge offen lassen oder ankreuzen</div>
+    </div>
+    <button class="rp-export-btn" onclick="exportReview()">↓ Export (.txt)</button>
+  </div>`;
+
+  for (const [key, sec] of Object.entries(REVIEW)) {
+    html += `<div class="rp-section">
+      <div class="rp-section-head">
+        <div class="rp-section-dot" style="background:${sec.color}"></div>
+        <div class="rp-section-label">${sec.label}</div>
+      </div>
+      <div class="rp-group">
+        <div class="rp-group-lbl">Aktuelle Fragen (${sec.existing.length})</div>`;
+    sec.existing.forEach((q, i) => {
+      html += `<label class="rp-q">
+        <input type="checkbox" class="rp-cb" id="cb-${key}-e-${i}" checked>
+        <div class="rp-q-text">
+          <div class="rp-q-q">${q.q}</div>
+          <div class="rp-q-opts">${q.opts}</div>
+        </div>
+      </label>`;
+    });
+    html += `</div><div class="rp-group">
+        <div class="rp-group-lbl">Neue Vorschläge (${sec.proposed.length})</div>`;
+    sec.proposed.forEach((q, i) => {
+      html += `<label class="rp-q">
+        <input type="checkbox" class="rp-cb" id="cb-${key}-p-${i}">
+        <div class="rp-q-text">
+          <div class="rp-q-q">${q.q}</div>
+          <div class="rp-q-opts">${q.opts}</div>
+        </div>
+        <div class="rp-new-badge">Neu</div>
+      </label>`;
+    });
+    html += `</div></div>`;
+  }
+  panel.innerHTML = html;
+}
+
+function exportReview() {
+  const ts = new Date().toLocaleDateString('de-AT', { day:'2-digit', month:'2-digit', year:'numeric' });
+  let txt = `FRAGEN-REVIEW · BODYHUB CHECKUP-LP\nStand: ${ts}\n${'═'.repeat(50)}\n\n`;
+  for (const [key, sec] of Object.entries(REVIEW)) {
+    txt += `\n${sec.label.toUpperCase()}\n${'─'.repeat(40)}\n\n`;
+    txt += `AKTUELLE FRAGEN:\n`;
+    sec.existing.forEach((q, i) => {
+      const on = document.getElementById(`cb-${key}-e-${i}`)?.checked;
+      txt += `${on ? '☑' : '☐'}  ${q.q}\n    → ${q.opts}\n\n`;
+    });
+    txt += `\nNEUE VORSCHLÄGE:\n`;
+    sec.proposed.forEach((q, i) => {
+      const on = document.getElementById(`cb-${key}-p-${i}`)?.checked;
+      txt += `${on ? '☑' : '☐'}  ${q.q}\n    → ${q.opts}\n\n`;
+    });
+  }
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'BodyHub-Fragen-Review.txt' });
+  a.click(); URL.revokeObjectURL(a.href);
 }
 </script>
 </body>
