@@ -10,7 +10,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; background: #D8D9DA; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; background: #F0F0F0; }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
@@ -35,8 +35,12 @@
     .tog.on-m { background: #1E5F8E; color: #fff; }
     .tog.on-r { background: #2E6DA4; color: #fff; }
 
+    /* ── PHONE SHELL / FRAME ── */
+    .phone-shell { width: 100%; }
+    .phone-frame { width: 100%; position: relative; overflow: hidden; }
+
     /* ── LP CONTAINERS ── */
-    .lp { margin-top: 49px; display: none; min-height: calc(100vh - 49px); }
+    .lp { margin-top: 49px; display: none; min-height: calc(100svh - 49px); }
     .lp.show { display: block; }
 
     /* ── THEME VARIABLES ── */
@@ -68,61 +72,49 @@
       background: var(--bg); color: var(--tx);
     }
 
-    /* ── HERO – mobile first ── */
+    /* ── HERO ── */
     .hero {
       background: var(--hbg);
-      display: flex; align-items: center;
-      padding: 32px 20px 44px;
+      display: flex; align-items: flex-start;
+      padding: 36px 24px 52px;
+      min-height: calc(100svh - 49px);
     }
     .hero-in {
-      max-width: 1080px; margin: 0 auto; width: 100%;
-      display: flex; flex-direction: column; gap: 28px;
+      width: 100%;
+      display: flex; flex-direction: column;
     }
     .h-badge {
       display: inline-flex; align-items: center; gap: 7px;
       padding: 5px 14px; border-radius: 100px;
-      font-size: 11.5px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
-      background: var(--acl); color: var(--ac); margin-bottom: 16px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+      background: var(--acl); color: var(--ac); margin-bottom: 20px;
     }
     .h-badge::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0; }
     .h1 {
       font-family: 'Lora', Georgia, serif;
-      font-size: 28px; font-weight: 500;
+      font-size: 30px; font-weight: 500;
       line-height: 1.22; color: var(--tx); margin-bottom: 14px;
     }
     .h-sub {
-      font-size: 15px; line-height: 1.72; color: var(--txl);
+      font-size: 15px; line-height: 1.74; color: var(--txl);
       margin-bottom: 28px;
     }
     .btn-p {
       display: flex; align-items: center; justify-content: center; gap: 9px;
-      width: 100%; padding: 15px 28px; border-radius: 100px; border: none; cursor: pointer;
+      width: 100%; padding: 16px 28px; border-radius: 100px; border: none; cursor: pointer;
       font-size: 15px; font-family: inherit; font-weight: 600;
-      background: var(--ac); color: #fff; transition: all 0.22s;
+      background: var(--ac); color: #fff; transition: background 0.22s;
     }
     .btn-p:hover { background: var(--ach); }
     .btn-p svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .trust-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+    .trust-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
     .tpill {
       display: flex; align-items: center; gap: 6px;
       padding: 6px 13px; border-radius: 100px;
       background: var(--card); border: 1px solid var(--br);
-      font-size: 12.5px; color: var(--txl);
+      font-size: 12px; color: var(--txl);
     }
     .tpill svg { width: 13px; height: 13px; color: var(--sc); flex-shrink: 0; }
-    .hero-img-wrap {
-      display: flex; justify-content: center; align-items: flex-end;
-    }
-    .hero-img-wrap img {
-      width: 100%; height: auto; display: block;
-      max-width: 280px;
-    }
-    .hero-img-wrap .img-placeholder {
-      width: 100%; max-width: 300px; aspect-ratio: 3/4;
-      border-radius: 20px; background: var(--acl);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 48px;
-    }
 
     /* ── MODAL OVERLAY ── */
     .overlay {
@@ -301,14 +293,68 @@
       .q-text { font-size: 19px; }
     }
     @media (min-width: 900px) {
-      /* Hero: two columns, image right */
-      .hero { padding: 64px 32px 56px; min-height: calc(100vh - 49px); }
-      .hero-in { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: end; }
-      .hero-img-wrap { align-items: flex-end; }
-      .hero-img-wrap img { max-width: 100%; max-height: calc(100vh - 160px); width: auto; }
-      .h1 { font-size: clamp(32px, 4vw, 46px); }
-      .h-sub { font-size: 16px; max-width: 440px; }
-      .hero-content { padding-bottom: 40px; }
+      body {
+        background: #141418;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 60px;
+      }
+      .preview-bar {
+        width: 393px;
+        position: static;
+        margin: 28px auto 0;
+        border-radius: 12px;
+        z-index: 1;
+      }
+      .phone-shell {
+        position: relative;
+        width: 393px;
+        flex-shrink: 0;
+        margin-top: 20px;
+      }
+      /* Outer bezel */
+      .phone-shell::before {
+        content: '';
+        position: absolute;
+        inset: -13px;
+        border: 13px solid #1c1c1e;
+        border-radius: 58px;
+        box-shadow:
+          0 0 0 1px #3a3a3c,
+          0 32px 80px rgba(0,0,0,0.75),
+          inset 0 0 0 1px rgba(255,255,255,0.06);
+        pointer-events: none;
+        z-index: 10;
+      }
+      /* Dynamic Island */
+      .phone-shell::after {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 34px;
+        background: #1c1c1e;
+        border-radius: 20px;
+        z-index: 20;
+        pointer-events: none;
+      }
+      .phone-frame {
+        width: 393px;
+        height: 852px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border-radius: 44px;
+        transform: translateZ(0);
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .phone-frame::-webkit-scrollbar { display: none; }
+      .phone-frame .lp { margin-top: 0; min-height: 852px; }
+      .phone-frame .hero { min-height: 852px; }
     }
   </style>
 </head>
@@ -324,6 +370,10 @@
     <button class="tog" data-v="r" onclick="switchLP('r')">Rücken</button>
   </div>
 </div>
+
+<!-- ═══ PHONE SHELL (Desktop: Mockup / Mobile: transparent) ═══ -->
+<div class="phone-shell">
+<div class="phone-frame">
 
 <!-- ═══ LP FRAUEN ═══ -->
 <div class="lp lp-w w show">
@@ -351,10 +401,6 @@
             Sofortige Einschätzung
           </span>
         </div>
-      </div>
-      <div class="hero-img-wrap">
-        <img src="../Downloads/SmilingThumbsUp LP Transparent.png" alt="Beckenboden-Checkup Frauen" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="img-placeholder" style="display:none">🪑</div>
       </div>
     </div>
   </section>
@@ -387,10 +433,6 @@
           </span>
         </div>
       </div>
-      <div class="hero-img-wrap">
-        <img src="../Downloads/SmilingThumbsUp LP Transparent Männer.png" alt="Beckenboden-Checkup Männer" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="img-placeholder" style="display:none">🪑</div>
-      </div>
     </div>
   </section>
 </div>
@@ -421,10 +463,6 @@
             Sofortige Empfehlung
           </span>
         </div>
-      </div>
-      <div class="hero-img-wrap">
-        <img src="../Downloads/relounge liege dummy hero section.png" alt="reLounge Therapieliege" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="img-placeholder" style="display:none">🛋️</div>
       </div>
     </div>
   </section>
@@ -468,6 +506,9 @@
 
 <!-- ═══ OVERLAY ═══ -->
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+</div><!-- /phone-frame -->
+</div><!-- /phone-shell -->
 
 <script>
 /* ══════════════════════════════════════════════════════
