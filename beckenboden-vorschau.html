@@ -33,7 +33,7 @@
     .tog:hover { color: #bbb; }
     .tog.on-w { background: #C4956A; color: #fff; }
     .tog.on-m { background: #1E5F8E; color: #fff; }
-    .tog.on-r { background: #2E6DA4; color: #fff; }
+    .tog.on-r { background: #A08B6E; color: #fff; }
 
     /* ── PHONE SHELL / FRAME ── */
     .phone-shell { width: 100%; }
@@ -63,12 +63,12 @@
       background: var(--bg); color: var(--tx);
     }
     .r {
-      --bg: #F5F7FA; --bg2: #EBF0F5; --card: #FFFFFF;
-      --tx: #1C2B3A; --txl: #5A6E80;
-      --ac: #2E6DA4; --ach: #245C8E; --acl: #D4E5F5; --acxl: #EDF5FB;
-      --sc: #4A8FA0; --scl: #DFF0EC;
-      --br: #D0DCE8; --sh: rgba(46,109,164,0.08); --shl: rgba(46,109,164,0.18);
-      --hbg: linear-gradient(135deg, #E5EEF5 0%, #EDF3F9 50%, #E0EEF5 100%);
+      --bg: #09090B; --bg2: #111115; --card: #1A1A22;
+      --tx: #E2E2E8; --txl: #80808E;
+      --ac: #A08B6E; --ach: #8C7860; --acl: #252018; --acxl: #1A1610;
+      --sc: #4A7A8C; --scl: #101820;
+      --br: #28282E; --sh: rgba(160,139,110,0.10); --shl: rgba(160,139,110,0.20);
+      --hbg: #09090B;
       background: var(--bg); color: var(--tx);
     }
 
@@ -76,12 +76,57 @@
     .hero {
       background: var(--hbg);
       display: flex; align-items: center; justify-content: center;
-      padding: 36px 24px 52px;
+      padding: 36px 24px 0;
       min-height: calc(100svh - 49px);
+      position: relative; overflow: hidden;
     }
     .hero-in {
       width: 100%;
       display: flex; flex-direction: column;
+      padding-bottom: 52px;
+      position: relative; z-index: 2;
+    }
+
+    /* ── DEVICE IMAGES ── */
+    .hero-device {
+      position: absolute;
+      bottom: 0; right: -4%;
+      width: 66%; max-width: 260px;
+      display: block; pointer-events: none; user-select: none;
+      z-index: 1;
+    }
+    /* White bg on PelviPower dummies disappears via multiply */
+    .lp-w .hero-device,
+    .lp-m .hero-device { mix-blend-mode: multiply; }
+
+    /* reLounge: full-width luxury bottom shot */
+    .lp-r .hero {
+      background: #09090B;
+      align-items: flex-start;
+      padding-top: 44px;
+    }
+    .lp-r .hero-in { padding-bottom: 0; }
+    .lp-r .hero-device {
+      position: absolute;
+      bottom: 0; left: 50%; right: auto;
+      transform: translateX(-50%);
+      width: 100%; max-width: 100%;
+      height: 52vh;
+      object-fit: cover;
+      object-position: center 62%;
+      mix-blend-mode: normal;
+    }
+    /* Gradient so text stays readable, image fades in below */
+    .lp-r .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        #09090B 28%,
+        rgba(9,9,11,0.78) 52%,
+        rgba(9,9,11,0.18) 78%,
+        transparent 100%
+      );
+      pointer-events: none; z-index: 1;
     }
     .h-badge {
       display: inline-flex; align-items: center; gap: 7px;
@@ -378,6 +423,7 @@
 <!-- ═══ LP FRAUEN ═══ -->
 <div class="lp lp-w w show">
   <section class="hero">
+    <img class="hero-device" src="./Pelvi frauen dummy.png" alt="">
     <div class="hero-in">
       <div class="hero-content">
         <span class="h-badge">Beckenboden-Checkup · Frauen</span>
@@ -409,6 +455,7 @@
 <!-- ═══ LP MÄNNER ═══ -->
 <div class="lp lp-m m">
   <section class="hero">
+    <img class="hero-device" src="./Pelvi männer dummy.png" alt="">
     <div class="hero-in">
       <div class="hero-content">
         <span class="h-badge">Beckenboden-Checkup · Männer</span>
@@ -440,6 +487,7 @@
 <!-- ═══ LP RÜCKEN (zusätzlicher Scope) ═══ -->
 <div class="lp lp-r r">
   <section class="hero">
+    <img class="hero-device" src="./relounge liege.jpeg" alt="">
     <div class="hero-in">
       <div class="hero-content">
         <span class="h-badge">Rücken-Checkup · reLounge</span>
