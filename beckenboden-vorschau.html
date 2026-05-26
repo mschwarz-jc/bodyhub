@@ -477,6 +477,14 @@
     /* ── KONTEXT-SATZ ── */
     .q-context { font-size: 12px; color: var(--ac); font-style: italic; line-height: 1.5; margin: -2px 0 10px; opacity: 0.85; }
 
+    /* ── Q0-RECAP: Nein-Button ── */
+    .btn-recap-skip {
+      width: 100%; margin-top: 14px; padding: 13px;
+      background: transparent; border: 1.5px solid var(--br); border-radius: 12px;
+      color: var(--txl); font-size: 14px; font-family: inherit; cursor: pointer; transition: all 0.18s;
+    }
+    .btn-recap-skip:hover { border-color: var(--ac); color: var(--tx); }
+
     /* ── Q0-RECAP: bereits behandelte Themen ── */
     .q-opt.done { pointer-events: none; background: var(--scl); border-color: var(--sc); opacity: 0.72; }
     .q-opt.done .opt-check { background: var(--sc); border-color: var(--sc); display: flex; align-items: center; justify-content: center; }
@@ -828,7 +836,7 @@ const BB_QS = {
   w: [
     // Q0 – Soft Intro (topic selector, multi-select)
     { text: 'Der Beckenboden beeinflusst viele unserer Körperfunktionen – wo bemerken Sie Veränderungen?',
-      opts: ['Häufiger und/oder dringender Harndrang', 'Harnverlust (ungewollter Urinverlust)', 'Rückenschmerzen', 'Veränderte Sexualität', 'Druckgefühl nach unten / Organsenkung', 'Noch keine Beschwerden – ich möchte vorsorgen'], multi: true },
+      opts: ['Häufiger und/oder dringender Harndrang', 'Harnverlust (ungewollter Urinverlust)', 'Rückenschmerzen', 'Veränderte Sexualität', 'Organsenkung / Druckgefühl nach unten'], multi: true },
     // Q1–2 Harndrang-Unterfragen
     { text: 'Wann tritt der Harndrang typischerweise auf?',
       context: 'Der Auslöser verrät uns viel über die Ursache – und hilft, das richtige Training zu empfehlen.',
@@ -1241,10 +1249,11 @@ const BB = {
         back.disabled = true;
         bbNudgeTimer = setTimeout(() => { bbNudgeTimer = null; bbStep++; BB._render(); }, 3000);
       } else if (step.t === 'q0recap') {
-        document.getElementById('bb-lbl').textContent = 'Möchten Sie ergänzen?';
+        document.getElementById('bb-lbl').textContent = '';
         body.innerHTML = this._renderQ0Recap();
         foot.classList.remove('hide');
-        document.getElementById('bb-nxt').disabled = false;
+        const hasRecap = bbAnswers['recap'] && bbAnswers['recap'].size > 0;
+        document.getElementById('bb-nxt').disabled = !hasRecap;
       } else if (step.t === 'section') {
         const sec = W_SECTIONS[step.n];
         document.getElementById('bb-lbl').textContent = sec.n;
@@ -1360,6 +1369,8 @@ const BB = {
     s.has(topicIdx) ? s.delete(topicIdx) : s.add(topicIdx);
     document.querySelectorAll('#bb-body .q-opt.new')
       .forEach(el => el.classList.toggle('sel', s.has(+el.dataset.t)));
+    const nxt = document.getElementById('bb-nxt');
+    if (nxt) nxt.disabled = s.size === 0;
   },
   _renderQ0Recap() {
     const done  = bbAnswers[0]       || new Set();
@@ -1377,8 +1388,9 @@ const BB = {
     }).join('');
     return `<div class="step-card">
       <div class="q-text">Möchten Sie noch etwas ergänzen?</div>
-      <div class="q-context">Die markierten Themen wurden bereits erfasst. Sie können bei Bedarf weitere hinzufügen – oder direkt weitermachen.</div>
+      <div class="q-context">Die markierten Themen wurden bereits erfasst. Sie können bei Bedarf weitere hinzufügen.</div>
       <div class="q-opts">${opts}</div>
+      <button class="btn-recap-skip" onclick="BB.next()">Nein, das war es soweit →</button>
     </div>`;
   },
 
