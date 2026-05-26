@@ -938,18 +938,15 @@ const BB_MAP = [
   {t:'res'}
 ];
 
-// Frauen: Thema → Sub-Fragen-Indizes
+// Frauen: Thema → Fragen-Indizes (themenspezifisch, inkl. Kontext-Fragen)
+// Geteilte Fragen (Q12 Kinder, Q20 Lebensphase) werden per Dedup nur einmal gezeigt
 const W_TOPIC_QS = {
-  0: [1, 2],   // Harndrang
-  1: [3, 4],   // Harnverlust
-  2: [5, 6],   // Rücken
-  3: [7, 8],   // Sexualität
-  4: [9, 10],  // Organsenkung
-  5: [11],     // Vorsorge (nur 1 Frage)
+  0: [1, 2, 19],          // Harndrang: Auslöser, Stärke, Schlaf/Nacht
+  1: [3, 4, 12, 20],      // Harnverlust: Situationen, Häufigkeit, Kinder, Lebensphase
+  2: [5, 6, 18],          // Rücken: Wo, Seit wann, Einschränkungen
+  3: [7, 8, 17, 20],      // Sexualität: Was, Belastung, Schmerzen/Druck, Lebensphase
+  4: [9, 10, 12, 20, 21], // Organsenkung: Gefühl, Verändert, Kinder, Lebensphase, OPs
 };
-
-// Nudge nach jedem Thema-Block
-const W_NUDGE_MAP = { 0:'hd', 1:'hv', 2:'ru', 3:'sx', 4:'og', 5:'vs' };
 
 const W_NUDGES = {
   hd: { icon:'💧', text:'Harndrang-Beschwerden betreffen viele Frauen – aber kaum jemand spricht darüber. Mit dem richtigen Training lässt sich das Thema in den meisten Fällen deutlich verbessern.' },
@@ -970,79 +967,77 @@ const W_SECTIONS = {
 
 function buildWFlow(topics, extraTopics = []) {
   const steps = [{t:'q', qi:0}];
-  // Bereich 1: Themen-Unterfragen
-  (topics || []).forEach(t => {
-    (W_TOPIC_QS[t] || []).forEach(qi => steps.push({t:'q', qi}));
-  });
-  steps.push({t:'fb', fi:1});
-  // Q0-Recap: Ergänzung möglich
+  const seen = new Set(); // Dedup: geteilte Fragen nur einmal
+  const addTopic = (t) => {
+    (W_TOPIC_QS[t] || []).forEach(qi => {
+      if (!seen.has(qi)) { seen.add(qi); steps.push({t:'q', qi}); }
+    });
+    steps.push({t:'fb', topic: t}); // Feedback direkt nach jedem Thema
+  };
+  (topics || []).forEach(t => addTopic(t));
   steps.push({t:'q0recap'});
-  // Extra-Themen aus Recap (leer wenn nichts ergänzt)
-  (extraTopics || []).forEach(t => {
-    (W_TOPIC_QS[t] || []).forEach(qi => steps.push({t:'q', qi}));
-  });
-  // Bereich 2
-  steps.push({t:'section', n:2});
-  steps.push({t:'q',qi:16},{t:'nudge',id:'b2a'},{t:'q',qi:17},{t:'q',qi:18},{t:'nudge',id:'b2b'},{t:'q',qi:19});
-  steps.push({t:'fb', fi:2});
-  // Bereich 3
-  steps.push({t:'section', n:3});
-  steps.push({t:'q',qi:12},{t:'q',qi:20},{t:'nudge',id:'b3a'},{t:'q',qi:21},{t:'q',qi:13});
-  steps.push({t:'fb', fi:3});
-  // Abschluss
-  steps.push({t:'q',qi:14},{t:'q',qi:15});
+  (extraTopics || []).forEach(t => addTopic(t));
+  // Abschluss (immer, themenunabhängig)
+  steps.push({t:'q',qi:13}); // Maßnahmen bisher
+  steps.push({t:'q',qi:14}); // Wunsch
+  steps.push({t:'q',qi:15}); // Skala
   steps.push({t:'contact'},{t:'loading'},{t:'res'});
   return steps;
 }
 
 const BB_FEED = {
   w: {
-    1: function(a) {
-      const topics = [...new Set([...(a[0] ? [...a[0]] : []), ...(a['recap'] ? [...a['recap']] : [])])];
+    // Feedback pro Thema – direkt nach dessen Fragen
+    0: function(a) { // Harndrang
+      const q2 = a[2] ? [...a[2]] : [];
+      const q19 = a[19] ? [...a[19]] : [];
+      if (q2.includes(1) || q2.includes(2))
+        return { icon:'💧', lbl:'Erste Einschätzung', hl:'Das deutet auf einen überaktiven Blasenmuskel hin.', body:'Der Drang, sofort reagieren zu müssen, ist belastend – und gut beeinflussbar. Der Blasenmuskel lässt sich gezielt beruhigen.' + (q19.includes(1) ? ' Dass Sie auch nachts betroffen sind, verdient besondere Aufmerksamkeit.' : '') + ' Mit dem richtigen Ansatz merken viele Frauen schon nach wenigen Wochen eine Veränderung.' };
+      return { icon:'💧', lbl:'Erste Einschätzung', hl:'Häufiger Harndrang ist ein Signal des Blasenmuskels.', body:'Wenn der Blasenmuskel überreagiert, entsteht dieses Dringgefühl. Das ist häufiger als gedacht – und mit gezieltem Training gut regulierbar.' };
+    },
+    1: function(a) { // Harnverlust
       const q3 = a[3] ? [...a[3]] : [];
-      // Harnverlust hat Vorrang
-      if (topics.includes(1)) {
-        if (q3.includes(0) || q3.includes(1))
-          return { icon:'💧', lbl:'Erste Einschätzung', hl:'Das klingt nach einer Belastungsinkontinenz.', body:'Was Sie beschreiben, ist das häufigste Beckenbodenmuster bei Frauen – besonders nach Schwangerschaften oder in den Wechseljahren. Der Beckenbodenmuskel gibt kurz nach, wenn der Druck von außen kommt. Das ist sehr gut trainierbar. Wir sind auf einem guten Weg.' };
-        if (q3.includes(2))
-          return { icon:'💧', lbl:'Erste Einschätzung', hl:'Das hört sich nach einem überaktiven Blasenmuskel an.', body:'Der Drang, sofort reagieren zu müssen, und dabei auch etwas zu verlieren – das ist belastend und schränkt ein. Die gute Nachricht: Der Blasenmuskel lässt sich trainieren und beruhigen. Mit dem richtigen Ansatz merken viele Frauen schon nach wenigen Wochen eine Veränderung.' };
-        return { icon:'💧', lbl:'Erste Einschätzung', hl:'Harnverlust ist häufiger als gedacht – und gut behandelbar.', body:'Was Sie beschreiben, betrifft viele Frauen. Gezieltes Beckenbodentraining zeigt hier in den meisten Fällen schnelle Wirkung – oft innerhalb weniger Wochen sichtbare Verbesserungen.' };
+      const q4 = a[4] ? [...a[4]] : [];
+      const q12 = a[12] ? [...a[12]] : [];
+      const q20 = a[20] ? [...a[20]] : [];
+      let body = '';
+      if (q3.includes(0) || q3.includes(1)) {
+        body = 'Was Sie beschreiben, ist das häufigste Beckenbodenmuster bei Frauen. Der Beckenbodenmuskel gibt kurz nach, wenn der Druck von außen kommt – das ist sehr gut trainierbar.';
+        if (q12.includes(2)) body += ' Eine Vaginalgeburt ist der häufigste Auslöser – und gleichzeitig der, bei dem Training am besten anschlägt.';
+        if (q20.includes(2) || q20.includes(3)) body += ' In den Wechseljahren verstärkt sich das häufig durch den veränderten Hormonstatus.';
+        return { icon:'💧', lbl:'Erste Einschätzung', hl:'Das klingt nach einer Belastungsinkontinenz.', body };
       }
-      if (topics.includes(0))
-        return { icon:'💧', lbl:'Erste Einschätzung', hl:'Das deutet auf einen überaktiven Blasenmuskel hin.', body:'Häufiger oder kaum kontrollierbarer Harndrang entsteht, wenn der Blasenmuskel überreagiert. Das ist häufiger als gedacht – und mit gezieltem Training gut regulierbar. Noch ein paar Fragen, dann haben wir ein vollständiges Bild.' };
-      if (topics.includes(4))
-        return { icon:'🔴', lbl:'Erste Einschätzung', hl:'Das klingt nach einem Senkungsgefühl.', body:'Das, was Sie beschreiben, kennen wir gut. Gezieltes Beckenbodentraining ist eine der wirksamsten Maßnahmen bei Organsenkungen – konservativ, ohne Operation, und je früher begonnen, desto besser. Sie sind auf dem richtigen Weg.' };
-      if (topics.includes(3))
-        return { icon:'🌸', lbl:'Danke für Ihre Offenheit', hl:'Veränderungen in der Sexualität sind häufiger als gedacht – und selten offen besprochen.', body:'Viele Frauen erleben das, was Sie gerade beschrieben haben – aber die wenigsten sprechen darüber. Der Beckenboden spielt in diesem Bereich eine zentrale Rolle. Mit dem richtigen, einfühlsamen Ansatz lässt sich hier viel verändern.' };
-      if (topics.includes(2))
-        return { icon:'🌿', lbl:'Erste Einschätzung', hl:'Rücken und Beckenboden hängen direkt zusammen.', body:'Die tiefe Rumpfmuskulatur verbindet beides. Oft ist der Rücken gar nicht das eigentliche Problem – sondern ein Zeichen, dass der Beckenboden mehr Unterstützung braucht. Wenn wir das angehen, verbessert sich meistens beides.' };
-      return { icon:'✨', lbl:'Sehr gut', hl:'Vorsorge zum richtigen Zeitpunkt – das ist die wirksamste Maßnahme.', body:'Gerade bevor Beschwerden entstehen, ist das Training am effektivsten. Viele Frauen warten zu lange. Sie nicht – das ist klug und macht einen echten Unterschied.' };
+      if (q3.includes(2)) return { icon:'💧', lbl:'Erste Einschätzung', hl:'Das hört sich nach einer Dranginkontinenz an.', body:'Der Drang, sofort reagieren zu müssen, und dabei etwas zu verlieren – das ist belastend. Der Blasenmuskel lässt sich gezielt trainieren und beruhigen.' };
+      body = 'Was Sie beschreiben, betrifft viele Frauen. Gezieltes Beckenbodentraining zeigt hier in den meisten Fällen schnelle Wirkung.';
+      if (q4.includes(2)) body = 'Tägliche Episoden sind ein klares Signal, dass gezieltes Handeln wichtig ist. ' + body;
+      return { icon:'💦', lbl:'Erste Einschätzung', hl:'Harnverlust ist häufiger als gedacht – und gut behandelbar.', body };
     },
-    2: function(a) {
-      const q17 = a[17] ? [...a[17]] : [];
-      const q16 = a[16] ? [...a[16]] : [];
+    2: function(a) { // Rücken
+      const q5 = a[5] ? [...a[5]] : [];
       const q18 = a[18] ? [...a[18]] : [];
-      const q18noRestrict = q18.filter(i => i !== 4);
-      if (q17.includes(4) || q17.includes(3))
-        return { icon:'⚡', lbl:'Wichtige Einordnung', hl:'Beckenbodenschmerzen haben fast immer eine muskuläre Ursache.', body:'Das klingt herausfordernd – und es ist wichtig, dass Sie es beschrieben haben. Schmerzen im Becken- oder Intimbereich entstehen häufig durch eine erhöhte Spannung der Beckenbodenmuskulatur. Das lässt sich gezielt und behutsam angehen. Sie sind nicht die Einzige mit diesem Thema.' };
-      if (q16.includes(2) || q16.includes(3))
-        return { icon:'🌿', lbl:'Wichtige Einordnung', hl:'Darm und Beckenboden werden oft getrennt behandelt – gehören aber zusammen.', body:'Was Sie beschreiben, ist ein deutlicher Hinweis, dass das gesamte Beckenbodensystem unter Druck steht. Viele Frauen wissen nicht, dass Darm- und Blasenprobleme dieselbe Wurzel haben können. Das ist gut behandelbar – und wir schauen beides an.' };
-      if (q18noRestrict.length >= 3)
-        return { icon:'🌸', lbl:'Wir hören Sie', hl:'Wir verstehen, wie einschränkend das ist. Das muss nicht so bleiben.', body:'Wenn Beschwerden so viele Lebensbereiche berühren, ist das belastend – körperlich und emotional. Das ist eine echte Last. Und gleichzeitig: Je klarer das Bild, das wir haben, desto gezielter können wir helfen. Gleich sind wir fast fertig.' };
-      return { icon:'💙', lbl:'Gut gemacht', hl:'Jetzt haben wir ein vollständiges Bild, wie sich das Thema in Ihrem Alltag zeigt.', body:'Das hilft uns, Ihre persönliche Einschätzung wirklich passend zu machen – nicht allgemein, sondern auf Sie zugeschnitten. Noch ein letzter Abschnitt.' };
+      let body = 'Die tiefe Rumpfmuskulatur verbindet Rücken und Beckenboden direkt. Oft ist der Rücken gar nicht das eigentliche Problem – sondern ein Zeichen, dass der Beckenboden mehr Unterstützung braucht.';
+      if (q5.includes(1)) body += ' Schmerzen im Steißbein- oder Beckenbereich stehen besonders oft in direktem Zusammenhang mit dem Beckenboden.';
+      if (q18.filter(i => i !== 4).length >= 2) body += ' Dass mehrere Alltagsbereiche eingeschränkt sind, zeigt, wie weit das Thema reicht.';
+      return { icon:'🌿', lbl:'Erste Einschätzung', hl:'Rücken und Beckenboden hängen direkt zusammen.', body };
     },
-    3: function(a) {
+    3: function(a) { // Sexualität
+      const q7 = a[7] ? [...a[7]] : [];
+      const q17 = a[17] ? [...a[17]] : [];
+      const q20 = a[20] ? [...a[20]] : [];
+      if (q7.includes(1) || q17.includes(4))
+        return { icon:'🌸', lbl:'Danke für Ihre Offenheit', hl:'Schmerzen in der Intimität haben häufig eine muskuläre Ursache.', body:'Eine erhöhte Spannung der Beckenbodenmuskulatur ist häufiger als gedacht – und lässt sich gezielt und behutsam angehen. Sie sind damit nicht allein.' + (q20.includes(2) || q20.includes(3) ? ' In der Perimenopause und Postmenopause spielen auch Hormonveränderungen eine Rolle – beides lässt sich gemeinsam angehen.' : '') };
+      return { icon:'🌸', lbl:'Danke für Ihre Offenheit', hl:'Veränderungen in der Sexualität sind häufiger als gedacht – und selten offen besprochen.', body:'Viele Frauen erleben das, was Sie gerade beschrieben haben – aber die wenigsten sprechen darüber. Der Beckenboden spielt in diesem Bereich eine zentrale Rolle. Mit dem richtigen, einfühlsamen Ansatz lässt sich hier viel verändern.' };
+    },
+    4: function(a) { // Organsenkung
+      const q9 = a[9] ? [...a[9]] : [];
       const q21 = a[21] ? [...a[21]] : [];
       const q20 = a[20] ? [...a[20]] : [];
-      const q12 = a[12] ? [...a[12]] : [];
-      if (q21.includes(3))
-        return { icon:'🔍', lbl:'Wichtige Einordnung', hl:'Endometriose und Beckenboden hängen eng zusammen.', body:'Endometriose beeinflusst nicht nur den Zyklus – sie verändert das gesamte Becken-Milieu, oft auch die Muskulatur. Das erfordert einen besonders behutsamen, spezialisierten Ansatz. Wir nehmen das mit in Ihre persönliche Einschätzung auf.' };
-      if (q20.includes(2) || q20.includes(3))
-        return { icon:'🌿', lbl:'Wichtige Einordnung', hl:'In der Menopause verändert sich das Bindegewebe – das erklärt viele der Symptome.', body:'Durch den veränderten Hormonstatus wird das Bindegewebe weniger elastisch, der Beckenboden verliert an Stabilität. Das ist ein natürlicher Prozess – aber kein unabänderlicher. Gezieltes Training kann diesen Effekt deutlich abmildern. Es ist nie zu spät.' };
-      if (q12.includes(2))
-        return { icon:'💧', lbl:'Wichtige Einordnung', hl:'Nach einer Vaginalgeburt verändert sich das gesamte Beckenbodengefüge.', body:'Das ist der häufigste Auslöser für Beckenbodenbeschwerden – und gleichzeitig der, bei dem Training am besten anschlägt. Viele Frauen warten Jahre, bevor sie etwas unternehmen. Gut, dass Sie jetzt hinschauen.' };
-      return { icon:'✨', lbl:'Fast fertig', hl:'Sie haben uns jetzt ein vollständiges Bild gegeben.', body:'Symptome, Alltag, Geschichte – wir haben alles, was wir für eine wirklich persönliche Einschätzung brauchen. Gleich erhalten Sie Ihre Analyse – direkt hier auf Ihrem Bildschirm.' };
-    }
+      let body = 'Gezieltes Beckenbodentraining ist eine der wirksamsten Maßnahmen bei Organsenkungen – konservativ, ohne Operation, und je früher begonnen, desto besser.';
+      if (q21.includes(3)) body += ' Endometriose verändert das gesamte Becken-Milieu und erfordert einen besonders behutsamen, spezialisierten Ansatz – das berücksichtigen wir.';
+      else if (q20.includes(2) || q20.includes(3)) body += ' In der Menopause verliert das Bindegewebe an Elastizität – gezieltes Training kann diesen Prozess spürbar abfedern.';
+      if (q9.includes(2)) body = 'Dass eine Senkung bereits ärztlich festgestellt wurde, gibt uns eine klare Grundlage. ' + body;
+      return { icon:'🔴', lbl:'Erste Einschätzung', hl:'Das klingt nach einem Senkungsgefühl.', body };
+    },
   },
   m: {
     1: function(a) {
@@ -1262,9 +1257,7 @@ const BB = {
         document.getElementById('bb-nxt').disabled = false;
       } else if (step.t === 'fb') {
         document.getElementById('bb-lbl').textContent = 'Einschätzung';
-        const prog = step.fi === 1 ? 33 : step.fi === 2 ? 60 : 82;
-        document.getElementById('bb-bar').style.width = prog + '%';
-        body.innerHTML = this._renderFB(BB_FEED.w[step.fi](bbAnswers));
+        body.innerHTML = this._renderFB(BB_FEED.w[step.topic](bbAnswers));
         foot.classList.remove('hide');
         document.getElementById('bb-nxt').disabled = false;
       } else if (step.t === 'contact') {
