@@ -477,6 +477,11 @@
     /* ── KONTEXT-SATZ ── */
     .q-context { font-size: 12px; color: var(--ac); font-style: italic; line-height: 1.5; margin: -2px 0 10px; opacity: 0.85; }
 
+    /* ── Q0-RECAP: bereits behandelte Themen ── */
+    .q-opt.done { pointer-events: none; background: var(--scl); border-color: var(--sc); opacity: 0.72; }
+    .q-opt.done .opt-check { background: var(--sc); border-color: var(--sc); display: flex; align-items: center; justify-content: center; }
+    .q-opt.done .opt-check::after { content:''; width:5px; height:5px; border-radius:50%; background:#fff; }
+
     /* ── BILDER AUSBLENDEN bei kleinem Screen (mobil) ── */
     @media (max-width: 899px) and (max-height: 680px),
            (max-width: 899px) and (max-width: 340px) {
@@ -955,7 +960,7 @@ const W_SECTIONS = {
   3: { n:'Abschnitt 3 von 3', title:'Ihre Geschichte', body:'Geburten, Lebensphase und Vorerkrankungen prägen den Beckenboden stark. Diese Informationen machen den Unterschied für eine wirklich persönliche Einschätzung.' },
 };
 
-function buildWFlow(topics) {
+function buildWFlow(topics, extraTopics = []) {
   const steps = [{t:'q', qi:0}];
   // Bereich 1: Themen-Unterfragen + Nudge je Thema
   (topics || []).forEach(t => {
@@ -963,6 +968,13 @@ function buildWFlow(topics) {
     if (W_NUDGE_MAP[t] !== undefined) steps.push({t:'nudge', id: W_NUDGE_MAP[t]});
   });
   steps.push({t:'fb', fi:1});
+  // Q0-Recap: Ergänzung möglich
+  steps.push({t:'q0recap'});
+  // Extra-Themen aus Recap (leer wenn nichts ergänzt)
+  (extraTopics || []).forEach(t => {
+    (W_TOPIC_QS[t] || []).forEach(qi => steps.push({t:'q', qi}));
+    if (W_NUDGE_MAP[t] !== undefined) steps.push({t:'nudge', id: W_NUDGE_MAP[t]});
+  });
   // Bereich 2
   steps.push({t:'section', n:2});
   steps.push({t:'q',qi:16},{t:'nudge',id:'b2a'},{t:'q',qi:17},{t:'q',qi:18},{t:'nudge',id:'b2b'},{t:'q',qi:19});
@@ -980,7 +992,7 @@ function buildWFlow(topics) {
 const BB_FEED = {
   w: {
     1: function(a) {
-      const topics = a[0] ? [...a[0]] : [];
+      const topics = [...new Set([...(a[0] ? [...a[0]] : []), ...(a['recap'] ? [...a['recap']] : [])])];
       const q3 = a[3] ? [...a[3]] : [];
       // Harnverlust hat Vorrang
       if (topics.includes(1)) {
@@ -1147,6 +1159,13 @@ const BB = {
         bbAnswers = {0: q0ans};
         bbFlow = buildWFlow(topics);
       }
+      // Nach Q0-Recap: Flow mit Extra-Topics rebuilden
+      if (step && step.t === 'q0recap') {
+        const orig = bbAnswers[0] ? [...bbAnswers[0]] : [];
+        const extra = bbAnswers['recap'] ? [...bbAnswers['recap']] : [];
+        bbFlow = buildWFlow(orig, extra);
+        // bbStep wird gleich ++, landet korrekt auf nächstem Schritt
+      }
     }
     bbStep++;
     this._render();
@@ -1216,6 +1235,11 @@ const BB = {
         foot.classList.add('hide');
         back.disabled = true;
         bbNudgeTimer = setTimeout(() => { bbNudgeTimer = null; bbStep++; BB._render(); }, 3000);
+      } else if (step.t === 'q0recap') {
+        document.getElementById('bb-lbl').textContent = 'Möchten Sie ergänzen?';
+        body.innerHTML = this._renderQ0Recap();
+        foot.classList.remove('hide');
+        document.getElementById('bb-nxt').disabled = false;
       } else if (step.t === 'section') {
         const sec = W_SECTIONS[step.n];
         document.getElementById('bb-lbl').textContent = sec.n;
@@ -1326,6 +1350,35 @@ const BB = {
     </div>`;
   },
 
+  // Q0-Recap: Thema ergänzen (topic-Index, nicht Opt-Index)
+  _toggleRecap(topicIdx) {
+    if (!bbAnswers['recap']) bbAnswers['recap'] = new Set();
+    const s = bbAnswers['recap'];
+    s.has(topicIdx) ? s.delete(topicIdx) : s.add(topicIdx);
+    document.querySelectorAll('#bb-body .q-opt.new')
+      .forEach(el => el.classList.toggle('sel', s.has(+el.dataset.t)));
+  },
+  _renderQ0Recap() {
+    const done  = bbAnswers[0]       || new Set();
+    const extra = bbAnswers['recap'] || new Set();
+    const q = BB_QS.w[0];
+    const opts = q.opts.map((o, i) => {
+      if (done.has(i)) {
+        return `<button class="q-opt done" disabled>
+          <span>${o}</span><span class="opt-check sel"></span>
+        </button>`;
+      }
+      return `<button class="q-opt new${extra.has(i) ? ' sel' : ''}" data-t="${i}" onclick="BB._toggleRecap(${i})">
+        <span>${o}</span><span class="opt-check"></span>
+      </button>`;
+    }).join('');
+    return `<div class="step-card">
+      <div class="q-text">Möchten Sie noch etwas ergänzen?</div>
+      <div class="q-context">Die markierten Themen wurden bereits erfasst. Sie können bei Bedarf weitere hinzufügen – oder direkt weitermachen.</div>
+      <div class="q-opts">${opts}</div>
+    </div>`;
+  },
+
   _renderNudge(n) {
     return `<div class="nudge-card" onclick="BB._skipNudge()">
       <span class="nudge-icon">${n.icon}</span>
@@ -1357,10 +1410,10 @@ const BB = {
 
   _renderContact() {
     return `<div class="step-card contact-card">
-      <div class="fb-icon">📋</div>
-      <div class="fb-lbl">Fast fertig</div>
-      <div class="fb-hl">Ihre persönliche Analyse erscheint direkt im Anschluss – hier auf Ihrem Bildschirm.</div>
-      <div class="fb-body">Geben Sie Ihre Kontaktdaten ein, damit wir Ihnen die Einschätzung auch zusenden und bei Fragen erreichbar sein können.</div>
+      <div class="fb-icon">📊</div>
+      <div class="fb-lbl">Ihre Analyse ist bereit</div>
+      <div class="fb-hl">Im nächsten Schritt sehen Sie alles – direkt hier auf dem Bildschirm.</div>
+      <div class="fb-body">Geben Sie Ihre E-Mail ein, damit wir Ihnen die Einschätzung zusätzlich zusenden und bei Fragen erreichbar sind.</div>
       <div class="contact-form">
         <input type="text" class="contact-input" id="bb-name" placeholder="Ihr Name *">
         <input type="email" class="contact-input" id="bb-email" placeholder="E-Mail Adresse *">
@@ -1380,7 +1433,7 @@ const BB = {
   // ── Frauen: Ergebnisseite (umfangreich, pro Thema) ──
   _renderResW() {
     const a = bbAnswers;
-    const topics = a[0] ? [...a[0]] : [];
+    const topics = [...new Set([...(a[0] ? [...a[0]] : []), ...(a['recap'] ? [...a['recap']] : [])])];
     const scale = a[15] ? [...a[15]][0] : null;
     const wishes = a[14] ? [...a[14]] : [];
     const name = a._contact?.name ? a._contact.name.split(' ')[0] : '';
