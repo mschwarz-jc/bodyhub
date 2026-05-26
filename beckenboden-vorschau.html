@@ -257,19 +257,20 @@
     }
     .overlay.on { opacity: 1; pointer-events: all; }
 
-    /* ── QUIZ MODAL – mobile first: bottom sheet ── */
+    /* ── QUIZ MODAL – immer zentriert ── */
     .q-modal {
       position: fixed; inset: 0; z-index: 2100;
-      display: flex; align-items: flex-end; justify-content: center;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
       pointer-events: none;
     }
     .q-modal.on { pointer-events: all; }
     .q-wrap {
-      width: 100%; max-width: 100%;
-      max-height: 92svh;
+      width: 100%; max-width: 620px;
+      max-height: calc(100dvh - 40px);
       display: flex; flex-direction: column;
-      border-radius: 20px 20px 0 0; overflow: hidden;
-      box-shadow: 0 -8px 40px rgba(0,0,0,0.16);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.22), 0 8px 24px rgba(0,0,0,0.1);
       opacity: 0; transform: translateY(24px);
       transition: opacity 0.3s, transform 0.3s;
     }
@@ -418,14 +419,17 @@
       .hero-device { display: none !important; }
     }
 
+    /* ── PREVIEW BAR auf Mobile ausblenden ── */
+    @media (max-width: 899px) {
+      .preview-bar { display: none; }
+      .lp { margin-top: 0; min-height: 100dvh; }
+    }
+
     /* ── BREAKPOINTS (min-width = mobile first) ── */
     @media (min-width: 560px) {
       .btn-p { width: auto; display: inline-flex; }
     }
     @media (min-width: 640px) {
-      /* Modal: centered card */
-      .q-modal { align-items: center; padding: 24px; }
-      .q-wrap { max-width: 620px; border-radius: 20px; max-height: calc(100dvh - 80px); box-shadow: 0 28px 80px rgba(0,0,0,0.22), 0 8px 24px rgba(0,0,0,0.1); }
       .q-body { padding: 28px 30px 22px; }
       .q-foot { padding: 14px 30px 22px; }
       .q-text { font-size: 19px; }
@@ -587,9 +591,9 @@
     <img class="hero-device" src="./Pelvi frauen dummy.png" alt="">
     <div class="hero-in">
       <div class="hero-content">
-        <span class="h-badge">Beckenboden-Checkup · Frauen</span>
-        <h1 class="h1">Wie gut kennt Ihr&nbsp;Körper<br>sich selbst?</h1>
-        <p class="h-sub">In wenigen Minuten erhalten Sie eine erste persönliche Einschätzung Ihrer Beckenbodengesundheit – kompakt, diskret und ohne Voranmeldung.</p>
+        <span class="h-badge">Beckenboden-Checkup für Frauen</span>
+        <h1 class="h1">Wie geht es<br>Ihrem Beckenboden?</h1>
+        <p class="h-sub">Ein kurzer, geführter Checkup – diskret, unverbindlich und ohne medizinische Diagnose. Für ein erstes Gefühl, welche Themen für Sie persönlich relevant sein könnten.</p>
         <button class="btn-p" onclick="BB.open('w')">
           Checkup starten
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
@@ -619,9 +623,9 @@
     <img class="hero-device" src="./Pelvi männer dummy.png" alt="">
     <div class="hero-in">
       <div class="hero-content">
-        <span class="h-badge">Beckenboden-Checkup · Männer</span>
-        <h1 class="h1">Blasenkontrolle,<br>Rücken, Vitalität.</h1>
-        <p class="h-sub">Der Beckenboden ist auch bei Männern ein zentrales Thema – oft unterschätzt. In wenigen Fragen erhalten Sie eine erste persönliche Einschätzung.</p>
+        <span class="h-badge">Beckenboden-Checkup für Männer</span>
+        <h1 class="h1">Wie gut kennen Sie<br>Ihren Beckenboden?</h1>
+        <p class="h-sub">Ein kurzer, geführter Checkup – diskret, unverbindlich und ohne medizinische Diagnose. Für ein erstes Bild, welche Themen für Sie persönlich relevant sein könnten.</p>
         <button class="btn-p" onclick="BB.open('m')">
           Checkup starten
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
