@@ -962,10 +962,9 @@ const W_SECTIONS = {
 
 function buildWFlow(topics, extraTopics = []) {
   const steps = [{t:'q', qi:0}];
-  // Bereich 1: Themen-Unterfragen + Nudge je Thema
+  // Bereich 1: Themen-Unterfragen
   (topics || []).forEach(t => {
     (W_TOPIC_QS[t] || []).forEach(qi => steps.push({t:'q', qi}));
-    if (W_NUDGE_MAP[t] !== undefined) steps.push({t:'nudge', id: W_NUDGE_MAP[t]});
   });
   steps.push({t:'fb', fi:1});
   // Q0-Recap: Ergänzung möglich
@@ -973,7 +972,6 @@ function buildWFlow(topics, extraTopics = []) {
   // Extra-Themen aus Recap (leer wenn nichts ergänzt)
   (extraTopics || []).forEach(t => {
     (W_TOPIC_QS[t] || []).forEach(qi => steps.push({t:'q', qi}));
-    if (W_NUDGE_MAP[t] !== undefined) steps.push({t:'nudge', id: W_NUDGE_MAP[t]});
   });
   // Bereich 2
   steps.push({t:'section', n:2});
