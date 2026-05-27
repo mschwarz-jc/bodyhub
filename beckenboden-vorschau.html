@@ -486,6 +486,25 @@
     /* ── KONTEXT-SATZ ── */
     .q-context { font-size: 12px; color: var(--ac); font-style: italic; line-height: 1.5; margin: -2px 0 10px; opacity: 0.85; }
 
+    /* ── KALENDER ── */
+    .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .cal-month-lbl { font-size: 15px; font-weight: 600; color: var(--tx); }
+    .cal-nav { background: none; border: 1.5px solid var(--br); border-radius: 8px; width: 32px; height: 32px; cursor: pointer; font-size: 18px; color: var(--tx); display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: inherit; }
+    .cal-nav:hover:not(:disabled) { border-color: var(--ac); color: var(--ac); }
+    .cal-nav:disabled { opacity: 0.3; cursor: default; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+    .cal-day-name { text-align: center; font-size: 11px; color: var(--txl); padding: 6px 0; }
+    .cal-day { aspect-ratio: 1; border: 1.5px solid transparent; border-radius: 8px; background: none; cursor: pointer; font-size: 13px; font-family: inherit; color: var(--tx); transition: all 0.15s; display: flex; align-items: center; justify-content: center; width: 100%; }
+    .cal-day:hover:not(.dis) { border-color: var(--ac); background: var(--acxl); }
+    .cal-day.today { border-color: var(--acl); }
+    .cal-day.sel { background: var(--ac); color: #fff; border-color: var(--ac); }
+    .cal-day.dis { opacity: 0.25; cursor: default; pointer-events: none; }
+    .time-slots-lbl { font-size: 13px; font-weight: 600; color: var(--tx); margin: 16px 0 8px; }
+    .time-slots { display: flex; flex-wrap: wrap; gap: 8px; }
+    .time-slot { padding: 8px 14px; border: 1.5px solid var(--br); border-radius: 8px; background: none; cursor: pointer; font-size: 13px; font-family: inherit; color: var(--tx); transition: all 0.15s; }
+    .time-slot:hover { border-color: var(--ac); background: var(--acxl); }
+    .time-slot.sel { background: var(--ac); color: #fff; border-color: var(--ac); }
+
     /* ── Q0-RECAP: Nein-Button ── */
     .btn-recap-skip {
       width: 100%; margin-top: 14px; padding: 13px;
@@ -999,7 +1018,7 @@ function buildWFlow(topics, extraTopics = []) {
   steps.push({t:'q',qi:13}); // Maßnahmen bisher
   steps.push({t:'q',qi:14}); // Wunsch
   steps.push({t:'q',qi:15}); // Skala
-  steps.push({t:'contact'},{t:'loading'},{t:'res'},{t:'pelvi'});
+  steps.push({t:'contact'},{t:'loading'},{t:'res'},{t:'pelvi'},{t:'calendar'},{t:'danke'});
   return steps;
 }
 
@@ -1140,6 +1159,7 @@ const R_LEVELS = [
 ══════════════════════════════════════════════════════ */
 let bbGender = 'w', bbStep = 0, bbAnswers = {}, bbTimer = null, bbNudgeTimer = null;
 let bbFlow = [{t:'q', qi:0}]; // Frauen: wird nach Q0 dynamisch aufgebaut
+let bbCalState = {year: null, month: null, selDate: null, selTime: null};
 const BB_Q_TOTAL = 11; // Männer
 
 const BB = {
@@ -1148,6 +1168,7 @@ const BB = {
     bbStep = 0;
     bbAnswers = {};
     bbFlow = [{t:'q', qi:0}];
+    bbCalState = {year: null, month: null, selDate: null, selTime: null};
     if (bbTimer) { clearTimeout(bbTimer); bbTimer = null; }
     const wrap = document.getElementById('bb-wrap');
     wrap.className = 'q-wrap ' + g;
@@ -1223,13 +1244,17 @@ const BB = {
   submitContact() {
     const nameEl = document.getElementById('bb-name');
     const emailEl = document.getElementById('bb-email');
+    const telEl = document.getElementById('bb-tel');
     const name = nameEl?.value?.trim() || '';
     const email = emailEl?.value?.trim() || '';
+    const tel = telEl?.value?.trim() || '';
     nameEl?.classList.remove('err');
     emailEl?.classList.remove('err');
+    telEl?.classList.remove('err');
     if (!name) { nameEl?.classList.add('err'); nameEl?.focus(); return; }
     if (!email || !email.includes('@')) { emailEl?.classList.add('err'); emailEl?.focus(); return; }
-    bbAnswers._contact = { name, email, tel: document.getElementById('bb-tel')?.value?.trim() || '' };
+    if (!tel) { telEl?.classList.add('err'); telEl?.focus(); return; }
+    bbAnswers._contact = { name, email, tel };
     bbStep++;
     this._render();
   },
@@ -1299,6 +1324,18 @@ const BB = {
         document.getElementById('bb-bar').style.width = '100%';
         body.innerHTML = this._renderPelvi();
         foot.classList.add('hide');
+      } else if (step.t === 'calendar') {
+        document.getElementById('bb-lbl').textContent = 'Termin wählen';
+        document.getElementById('bb-bar').style.width = '100%';
+        if (!bbCalState.year) { const n = new Date(); bbCalState.year = n.getFullYear(); bbCalState.month = n.getMonth(); }
+        body.innerHTML = this._renderCalendar();
+        foot.classList.remove('hide');
+        document.getElementById('bb-nxt').disabled = !(bbCalState.selDate && bbCalState.selTime);
+      } else if (step.t === 'danke') {
+        document.getElementById('bb-lbl').textContent = '';
+        document.getElementById('bb-bar').style.width = '100%';
+        body.innerHTML = this._renderDanke();
+        foot.classList.add('hide');
       } else {
         document.getElementById('bb-lbl').textContent = 'Ihre persönliche Einschätzung';
         document.getElementById('bb-bar').style.width = '98%';
@@ -1306,7 +1343,7 @@ const BB = {
         foot.classList.remove('hide');
         document.getElementById('bb-nxt').disabled = false;
       }
-      back.disabled = (bbStep === 0 || step.t === 'loading' || step.t === 'nudge' || step.t === 'pelvi');
+      back.disabled = (bbStep === 0 || step.t === 'loading' || step.t === 'nudge' || step.t === 'pelvi' || step.t === 'danke');
     } else {
       // Männer: unveränderter Ablauf
       const qAnswered = BB_MAP.slice(0, bbStep + 1).filter(s => s.t === 'q').length;
@@ -1463,7 +1500,7 @@ const BB = {
       <div class="contact-form">
         <input type="text" class="contact-input" id="bb-name" placeholder="Ihr Name *">
         <input type="email" class="contact-input" id="bb-email" placeholder="E-Mail Adresse *">
-        <input type="tel" class="contact-input" id="bb-tel" placeholder="Telefonnummer (optional)">
+        <input type="tel" class="contact-input" id="bb-tel" placeholder="Telefonnummer *">
         <button class="btn-res-cta" style="margin-top:6px" onclick="BB.submitContact()">Analyse erstellen →</button>
       </div>
     </div>`;
@@ -1482,8 +1519,81 @@ const BB = {
       <div class="fb-lbl">Warum PelviPower?</div>
       <div class="fb-hl">Der entscheidende Unterschied liegt in der Tiefe.</div>
       <div class="fb-body">Wenn wir selbst versuchen zu trainieren, spannen wir hauptsächlich die äußeren Schließmuskeln an – die tiefe Beckenbodenmuskulatur, die für all unsere Funktionen wirklich gebraucht wird, können wir nicht bewusst ansteuern. Genau hier setzt PelviPower an: Durch gezielte Magnetfeldimpulse werden die Nervenzellen direkt im Muskel aktiviert und alle wichtigen Muskelgruppen erreicht und gestärkt. Gleichzeitig lernt das Gehirn wieder, diese eingeschlafenen Muskelzellen zu benutzen. Mit jeder Sitzung wird mehr Kraft zurückgebracht – bis alles wieder automatisch und zuverlässig arbeitet.</div>
-      <button class="btn-res-cta" style="margin-top:20px" onclick="BB.close()">Kostenloses Erstgespräch vereinbaren →</button>
+      <button class="btn-res-cta" style="margin-top:20px" onclick="BB.next()">Termin wählen →</button>
     </div>`;
+  },
+
+  _renderCalendar() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const year = bbCalState.year, month = bbCalState.month;
+    const monthNames = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    let startDow = firstDay.getDay() - 1; if (startDow < 0) startDow = 6;
+    const dayNames = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+    const headers = dayNames.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+    let cells = '';
+    for (let i = 0; i < startDow; i++) cells += '<div></div>';
+    for (let d = 1; d <= lastDay.getDate(); d++) {
+      const date = new Date(year, month, d);
+      const dow = date.getDay();
+      const disabled = date <= today || dow === 0 || dow === 6;
+      const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const sel = bbCalState.selDate === ds;
+      cells += `<button class="cal-day${disabled?' dis':''}${sel?' sel':''}"${disabled?' disabled':''} onclick="BB._pickCalDate('${ds}')">${d}</button>`;
+    }
+    const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
+    const prevDis = isCurrentMonth ? ' disabled' : '';
+    let timeSlotsHtml = '';
+    if (bbCalState.selDate) {
+      const slots = ['09:00','10:00','11:00','14:00','15:00','16:00','17:00'];
+      const btns = slots.map(t => `<button class="time-slot${bbCalState.selTime===t?' sel':''}" onclick="BB._pickCalTime('${t}')">${t}</button>`).join('');
+      timeSlotsHtml = `<div class="time-slots-lbl">Uhrzeit wählen</div><div class="time-slots">${btns}</div>`;
+    }
+    return `<div class="step-card">
+      <div class="cal-header">
+        <button class="cal-nav"${prevDis} onclick="BB._calNav(-1)">‹</button>
+        <span class="cal-month-lbl">${monthNames[month]} ${year}</span>
+        <button class="cal-nav" onclick="BB._calNav(1)">›</button>
+      </div>
+      <div class="cal-grid">${headers}${cells}</div>
+      ${timeSlotsHtml}
+    </div>`;
+  },
+  _renderDanke() {
+    const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+    let dateDisplay = '';
+    if (bbCalState.selDate) {
+      const [y,m,d] = bbCalState.selDate.split('-').map(Number);
+      const dObj = new Date(y, m-1, d);
+      dateDisplay = `${days[dObj.getDay()]}, ${d}. ${months[m-1]} ${y}`;
+    }
+    return `<div class="step-card fb-card">
+      <div class="fb-icon">✅</div>
+      <div class="fb-lbl">Termin vorgemerkt</div>
+      <div class="fb-hl">Wir freuen uns auf Sie!</div>
+      <div class="fb-body">${dateDisplay} um ${bbCalState.selTime} Uhr<br><br>Unser Team meldet sich in Kürze zur Bestätigung. Wir sehen uns bald im BodyHub!</div>
+    </div>`;
+  },
+  _calNav(dir) {
+    let m = bbCalState.month + dir, y = bbCalState.year;
+    if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; }
+    bbCalState.month = m; bbCalState.year = y;
+    bbCalState.selDate = null; bbCalState.selTime = null;
+    document.getElementById('bb-body').innerHTML = this._renderCalendar();
+    document.getElementById('bb-nxt').disabled = true;
+  },
+  _pickCalDate(ds) {
+    bbCalState.selDate = ds; bbCalState.selTime = null;
+    document.getElementById('bb-body').innerHTML = this._renderCalendar();
+    document.getElementById('bb-nxt').disabled = true;
+  },
+  _pickCalTime(t) {
+    bbCalState.selTime = t;
+    document.getElementById('bb-body').innerHTML = this._renderCalendar();
+    document.getElementById('bb-nxt').disabled = false;
   },
 
   // ── Frauen: Ergebnisseite (umfangreich, pro Thema) ──
