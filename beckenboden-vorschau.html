@@ -240,6 +240,9 @@
     }
     .btn-p:hover { background: var(--ach); }
     .btn-p svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .hero-content .btn-p { width: auto; min-width: 200px; display: inline-flex; margin-left: auto; margin-right: auto; }
+    .hero-content { display: flex; flex-direction: column; align-items: flex-start; }
+    .hero-content .btn-p { align-self: center; }
     .trust-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
     .tpill {
       display: flex; align-items: center; gap: 6px;
@@ -465,6 +468,7 @@
     .pelvi-why-card { background: var(--acxl); border: 1.5px solid var(--acl); border-radius: 14px; padding: 18px 16px; margin-bottom: 16px; }
     .pelvi-why-hl { font-size: 14px; font-weight: 700; color: var(--ac); margin-bottom: 8px; }
     .pelvi-why-body { font-size: 13.5px; color: var(--txl); line-height: 1.65; }
+    .res-card-link { background: var(--acxl); border-color: var(--acl); }
 
     /* ── NUDGE KARTE ── */
     .nudge-card { background: var(--acxl); border: 1.5px solid var(--acl); border-radius: 16px; padding: 28px 22px; text-align: center; cursor: pointer; animation: fadeUp 0.24s ease; }
@@ -996,7 +1000,7 @@ function buildWFlow(topics, extraTopics = []) {
   steps.push({t:'q',qi:13}); // Maßnahmen bisher
   steps.push({t:'q',qi:14}); // Wunsch
   steps.push({t:'q',qi:15}); // Skala
-  steps.push({t:'contact'},{t:'loading'},{t:'res'});
+  steps.push({t:'contact'},{t:'loading'},{t:'pelvi'},{t:'res'});
   return steps;
 }
 
@@ -1291,13 +1295,19 @@ const BB = {
         body.innerHTML = this._renderLoading();
         foot.classList.add('hide');
         setTimeout(() => { bbStep++; BB._render(); }, 2800);
+      } else if (step.t === 'pelvi') {
+        document.getElementById('bb-lbl').textContent = '';
+        document.getElementById('bb-bar').style.width = '98%';
+        body.innerHTML = this._renderPelvi();
+        foot.classList.remove('hide');
+        document.getElementById('bb-nxt').disabled = false;
       } else {
         document.getElementById('bb-lbl').textContent = 'Ihre persönliche Einschätzung';
         document.getElementById('bb-bar').style.width = '100%';
         body.innerHTML = this._renderResW();
         foot.classList.add('hide');
       }
-      back.disabled = (bbStep === 0 || step.t === 'loading' || step.t === 'nudge');
+      back.disabled = (bbStep === 0 || step.t === 'loading' || step.t === 'nudge' || step.t === 'pelvi');
     } else {
       // Männer: unveränderter Ablauf
       const qAnswered = BB_MAP.slice(0, bbStep + 1).filter(s => s.t === 'q').length;
@@ -1467,6 +1477,15 @@ const BB = {
     </div>`;
   },
 
+  _renderPelvi() {
+    return `<div class="step-card fb-card">
+      <div class="fb-icon">⚡</div>
+      <div class="fb-lbl">Warum PelviPower?</div>
+      <div class="fb-hl">Der entscheidende Unterschied liegt in der Tiefe.</div>
+      <div class="fb-body">Wenn wir selbst versuchen zu trainieren, spannen wir hauptsächlich die äußeren Schließmuskeln an – die tiefe Beckenbodenmuskulatur, die für all unsere Funktionen wirklich gebraucht wird, können wir nicht bewusst ansteuern. Genau hier setzt PelviPower an: Durch gezielte Magnetfeldimpulse werden die Nervenzellen direkt im Muskel aktiviert und alle wichtigen Muskelgruppen erreicht und gestärkt. Gleichzeitig lernt das Gehirn wieder, diese eingeschlafenen Muskelzellen zu benutzen. Mit jeder Sitzung wird mehr Kraft zurückgebracht – bis alles wieder automatisch und zuverlässig arbeitet.</div>
+    </div>`;
+  },
+
   // ── Frauen: Ergebnisseite (umfangreich, pro Thema) ──
   _renderResW() {
     const a = bbAnswers;
@@ -1474,94 +1493,129 @@ const BB = {
     const scale = a[15] ? [...a[15]][0] : null;
     const wishes = a[14] ? [...a[14]] : [];
     const name = a._contact?.name ? a._contact.name.split(' ')[0] : '';
+    const q13val = a[13] ? [...a[13]][0] : null;
 
     let introHl;
     if (wishes.includes(0)) introHl = 'Mehr Leichtigkeit und Unbeschwertheit im Alltag – das ist erreichbar.';
     else if (wishes.includes(1)) introHl = 'Die Angst vor Verschlimmerung lässt sich stoppen – mit dem richtigen Ansatz.';
     else if (wishes.includes(2)) introHl = 'Sich wieder wohl im eigenen Körper zu fühlen – daran arbeiten wir gemeinsam.';
-    else if (wishes.includes(3)) introHl = 'Mehr Sicherheit und Intimität – ein wichtiges Ziel, das wir ernst nehmen.';
+    else if (wishes.includes(3)) introHl = 'Mehr Sicherheit und Intimitat – ein wichtiges Ziel, das wir ernst nehmen.';
     else introHl = 'Basierend auf Ihren Angaben haben wir ein klares Bild – und passende Ansätze für Sie.';
 
     const TOPIC_DATA = {
       0: {
         icon:'💧', title:'Häufiger Harndrang',
-        intro:'Ein häufiger oder dringender Harndrang ist ein Zeichen, dass der Blasenmuskel überaktiv reagiert – eine häufige und gut behandelbare Erscheinung.',
+        intro:'Ein überaktiver Blasenmuskel – häufig, gut behandelbar, und oft weniger bekannt als andere Beckenbodenthemen.',
         body(a) {
-          let t = '';
           const str = a[2] ? [...a[2]] : [];
           const trg = a[1] ? [...a[1]] : [];
-          if (trg.includes(3)) t += 'Dass Sie auch nachts betroffen sind, weist auf eine stärkere Überaktivität hin – das verdient besondere Aufmerksamkeit. ';
-          if (str.includes(1)) t += 'Der kaum aufschiebbare Drang ist belastend und schränkt die Lebensqualität ein. ';
-          if (str.includes(2)) t += 'Der Übergang zu Harnverlust zeigt, dass der Blasenmuskel gezielt beruhigt werden sollte. ';
-          t += 'Gezieltes Beckenbodentraining kombiniert mit Blasentraining kann die Überaktivität nachhaltig regulieren – oft sind schon nach wenigen Wochen Verbesserungen spürbar.';
+          const q19 = a[19] ? [...a[19]] : [];
+          let t = '';
+          if (trg.includes(0)) t += 'Der Zusammenhang mit Stress und Aufregung zeigt eine enge Verbindung zwischen Nervensystem und Blasenmuskel – ein sehr gutes Zeichen für die Trainierbarkeit. ';
+          if (trg.includes(1)) t += 'Harndrang durch Kälte oder fließendes Wasser ist ein klassisches Zeichen einer Reizblase – ein bekanntes Muster, das ausgezeichnet auf gezieltes Training anspricht. ';
+          if (trg.includes(2) && !trg.includes(0) && !trg.includes(1)) t += 'Harndrang ohne erkennbaren Auslöser deutet auf eine generelle Überaktivität hin – gezieltes Training kann diesen Grundzustand nachhaltig beruhigen. ';
+          if (trg.includes(3) || q19.includes(1)) t += 'Dass Sie auch nachts betroffen sind, zeigt eine stärkere Überaktivität – das beeinflusst Schlaf und Erholung erheblich und braucht besondere Aufmerksamkeit. ';
+          if (str.includes(1)) t += 'Der kaum aufschiebbare Drang schränkt Spontaneität und Lebensqualität ein – genau das lässt sich durch gezieltes Blasen- und Beckenbodentraining regulieren. ';
+          else if (str.includes(2)) t += 'Wenn beim starken Drang Urin verloren geht, sind Blase und Beckenboden gemeinsam betroffen – beide werden im Training gezielt angesprochen. ';
+          if (!t) t += 'Häufiger Harndrang zeigt, dass der Blasenmuskel überreagiert – ein Signal, das gut behandelbar ist. ';
+          t += 'Erste spürbare Verbesserungen berichten viele Frauen schon nach den ersten Behandlungseinheiten.';
           return t;
         }
       },
       1: {
         icon:'💦', title:'Harnverlust',
-        intro:'Ungewollter Urinverlust ist eines der häufigsten Beckenboden-Themen bei Frauen – und in den meisten Fällen ohne Operation gut behandelbar.',
+        intro:'Das häufigste Beckenboden-Thema bei Frauen überhaupt. Und in über 95 % der Fälle ohne Operation behandelbar.',
         body(a) {
-          let t = '';
           const situ = a[3] ? [...a[3]] : [];
           const freq = a[4] ? [...a[4]] : [];
-          if (situ.includes(0) || situ.includes(1)) t += 'Was Sie beschreiben, klingt nach einer Belastungsinkontinenz – der Druck bei körperlicher Aktivität überfordert den Beckenbodenmuskel kurz. ';
-          if (situ.includes(2)) t += 'Der Verlust beim starken Harndrang deutet auf eine Mischform hin – das kennen wir gut und gehen gezielt darauf ein. ';
-          if (freq.includes(2)) t += 'Tägliche Episoden sind ein klares Signal, dass gezieltes Handeln wichtig ist. ';
-          else if (freq.includes(1)) t += 'Mehrmals pro Woche ist häufig genug, um den Alltag zu beeinflussen – hier lässt sich viel verändern. ';
-          t += 'Gezieltes Beckenbodentraining zeigt bei Harnverlust besonders schnelle Ergebnisse.';
+          const q12 = a[12] ? [...a[12]] : [];
+          const q20 = a[20] ? [...a[20]] : [];
+          let t = '';
+          if ((situ.includes(0) || situ.includes(1)) && situ.includes(2)) {
+            t += 'Was Sie beschreiben, ist eine Mischform aus Belastungs- und Dranginkontinenz. Beckenboden und Blasenmuskel werden gemeinsam gezielt trainiert. ';
+          } else if (situ.includes(0) && situ.includes(1)) {
+            t += 'Harnverlust beim Husten/Niesen und bei körperlicher Belastung – das klassischste Bild einer Belastungsinkontinenz. Und das Muster mit den schnellsten Behandlungserfolgen. ';
+          } else if (situ.includes(0) || situ.includes(1)) {
+            t += 'Belastungsinkontinenz – der Beckenboden muss in diesen Situationen schnell genug reagieren. Gezieltes Training trainiert exakt diese Reaktionsgeschwindigkeit. ';
+          } else if (situ.includes(2)) {
+            t += 'Harnverlust bei dringendem Harndrang deutet auf eine Dranginkontinenz hin – der Blasenmuskel reagiert zu früh und zu stark. ';
+          }
+          if (freq.includes(2)) t += 'Fast tägliche Episoden bedeuten, dass das Thema ständig präsent ist und die Lebensqualität erheblich beeinflusst. ';
+          else if (freq.includes(1)) t += 'Mehrmals pro Woche ist bereits häufig genug, um den Alltag zu verändern – sei es durch Anpassungen, Vorsichtsmaßnahmen oder innere Anspannung. ';
+          if (q12.includes(2)) t += 'Nach einer Vaginalgeburt mit merklichen Veränderungen ist der Beckenboden besonders belastet – und gleichzeitig besonders dankbar für gezieltes Aufbautraining. ';
+          if (q20.includes(2) || q20.includes(3)) t += 'In der Peri- oder Postmenopause beeinflussen Hormonspiegel die Gewebeelastizität direkt – gezieltes Training kompensiert das sehr gut. ';
+          t += 'Strukturiertes Beckenbodentraining zeigt bei Harnverlust die stärksten Ergebnisse aller konservativen Methoden.';
           return t;
         }
       },
       2: {
         icon:'🌿', title:'Rückenschmerzen',
-        intro:'Rücken und Beckenboden sind durch die tiefe Rumpfmuskulatur direkt miteinander verbunden. Training stärkt immer auch die Rückenstabilität.',
+        intro:'Rücken und Beckenboden teilen dieselbe tiefe Muskulatur. Was gut für den Beckenboden ist, stärkt immer auch den Rücken.',
         body(a) {
-          let t = '';
           const loc = a[5] ? [...a[5]] : [];
           const dur = a[6] ? [...a[6]] : [];
-          if (loc.includes(1)) t += 'Schmerzen im Steißbein- oder Beckenbereich stehen besonders oft in direktem Zusammenhang mit dem Beckenboden. ';
-          if (dur.includes(2)) t += 'Sehr lang anhaltende Beschwerden brauchen einen konsequenten, ganzheitlichen Ansatz – aber bedeutende Verbesserungen sind realistisch. ';
-          else if (dur.includes(1)) t += 'Über ein Jahr anhaltende Beschwerden haben sich gefestigt und sprechen gut auf gezieltes Training an. ';
-          t += 'Ein kombiniertes Beckenboden- und Rückenprogramm adressiert beide Themen gleichzeitig.';
+          const q18 = a[18] ? [...a[18]] : [];
+          let t = '';
+          if (loc.includes(1)) t += 'Schmerzen im Steißbein- oder Beckenbereich haben eine besonders enge Verbindung zum Beckenboden – die Muskulatur dort ist buchstäblich direkt verflochten. ';
+          else if (loc.includes(2)) t += 'Diffuse Rückenschmerzen ohne klare Lokalisation entstehen häufig durch ein Ungleichgewicht in der tiefen Rumpfmuskulatur – genau dort, wo der Beckenboden das stabilisierende Fundament bildet. ';
+          else if (loc.includes(0)) t += 'Schmerzen im unteren Rücken hängen besonders eng mit der Beckenbodenmuskulatur zusammen – sie bildet buchstäblich das Fundament, auf dem der gesamte Rücken aufbaut. ';
+          if (dur.includes(2)) t += 'Sehr lang anhaltende Beschwerden haben sich tief verankert. Das braucht einen konsequenten Ansatz – aber die Verbesserungspotenziale sind oft größer als erwartet. ';
+          else if (dur.includes(1)) t += 'Über ein Jahr anhaltende Beschwerden haben sich gefestigt – das spricht für einen strukturierten, regelmäßigen Trainingsansatz statt isolierter Maßnahmen. ';
+          else t += 'Da die Beschwerden noch nicht chronisch sind, ist der Zeitpunkt ideal – bevor sich Kompensationsmuster festigen. ';
+          if (q18.includes(0)) t += 'Dass Sport und körperliche Aktivität eingeschränkt sind, ist einer der spürbaren Verluste – Energie, Stimmung und Wohlbefinden hängen daran. ';
+          t += 'Ein kombiniertes Beckenboden- und Rückentraining löst das Problem an der Ursache – nicht nur die Symptome.';
           return t;
         }
       },
       3: {
         icon:'🌸', title:'Sexualität & Körpergefühl',
-        intro:'Veränderungen in der Sexualität sind ein häufiges, aber selten offen besprochenes Thema. Der Beckenboden spielt dabei eine zentrale Rolle.',
+        intro:'Veränderungen in der Sexualität sprechen die wenigsten offen an. Der Beckenboden spielt dabei eine zentrale Rolle – und ist sehr gut trainierbar.',
         body(a) {
-          let t = '';
           const was = a[7] ? [...a[7]] : [];
           const bel = a[8] ? [...a[8]] : [];
-          if (was.includes(1)) t += 'Schmerzen beim Intimverkehr können auf eine erhöhte Beckenbodenspannung hinweisen – das ist gut angehbar, wenn es behutsam begleitet wird. ';
-          if (was.includes(2)) t += 'Innere Anspannung und Unsicherheit hängen oft mit unbewusster Schutzspannung des Beckenbodens zusammen. ';
-          if (bel.includes(2)) t += 'Dass Sie es als stark belastend erleben – das nehmen wir ernst und gehen einfühlsam und gezielt vor. ';
-          t += 'Mit dem richtigen Training lässt sich hier in vielen Fällen eine deutliche Verbesserung erzielen.';
+          const q17 = a[17] ? [...a[17]] : [];
+          const q20 = a[20] ? [...a[20]] : [];
+          let t = '';
+          if (was.includes(0)) t += 'Weniger Empfindung entsteht, wenn der Beckenboden an Durchblutung und neuromuskularer Aktivitat verliert. Gezieltes Training verbessert die Durchblutung und reaktiviert die Nervenzellen – spurbar. ';
+          if (was.includes(1) || (q17.length > 0 && !q17.every(i => i === 0))) t += 'Schmerzen beim Intimverkehr entstehen haufig durch eine erhohte Beckenbodenspannung – eine Schutzreaktion des Korpers, die sich gezielt und behutsam losen lasst. ';
+          if (was.includes(2)) t += 'Innere Anspannung und Unsicherheit sind oft eine unbewusste Reaktion des Nervensystems. Das lasst sich Schritt fur Schritt auflosen – und das Korpergefuhl kehrt zuruck. ';
+          if (bel.includes(2)) t += 'Dass das Thema Ihre Beziehung beeinflusst – das nehmen wir ernst und gehen besonders einfühlsam und strukturiert vor. ';
+          else if (bel.includes(1)) t += 'Dass Sie darüber nicht offen sprechen – das kennen die meisten Frauen in ähnlichen Situationen. Sie sind damit nicht allein. ';
+          if (q20.includes(2) || q20.includes(3)) t += 'In der Peri- und Postmenopause verändern Hormone die Gewebespannung direkt – gezieltes Beckenbodentraining kann hier sehr gut gegensteuern. ';
+          t += 'Viele Frauen berichten nach gezieltem Training von deutlicher Verbesserung – in Empfindung, weniger Schmerz und mehr Körpergefühl.';
           return t;
         }
       },
       4: {
-        icon:'🔴', title:'Druckgefühl / Organsenkung',
-        intro:'Ein Druckgefühl nach unten oder eine Organsenkung ist eines der eindrucksvollsten Zeichen einer Beckenbodenbelastung – und häufig lange nicht richtig eingeordnet.',
+        icon:'🪷', title:'Organsenkung & Druckgefühl',
+        intro:'Organsenkung ist eines der eindrucksvollsten Zeichen einer Beckenbodenbelastung – und wird oft lange nicht richtig eingeordnet.',
         body(a) {
-          let t = '';
           const feel = a[9] ? [...a[9]] : [];
           const chg = a[10] ? [...a[10]] : [];
-          if (feel.includes(2)) t += 'Dass eine Senkung bereits ärztlich festgestellt wurde, gibt uns eine klare Grundlage. Gezieltes Training ist eine der wirksamsten konservativen Maßnahmen. ';
-          else if (feel.includes(1)) t += 'Ein regelmäßiges Fremdkörpergefühl ist ein eindeutiges Signal – frühzeitiges Handeln bringt die besten Ergebnisse. ';
-          if (chg.includes(1)) t += 'Dass es sich verschlimmert, unterstreicht, wie wichtig jetzt gezielte Maßnahmen sind. ';
-          t += 'Beckenbodentraining kann Senkungsbeschwerden in vielen Fällen deutlich lindern und weiteres Fortschreiten bremsen.';
+          const q12 = a[12] ? [...a[12]] : [];
+          const q20 = a[20] ? [...a[20]] : [];
+          const q21 = a[21] ? [...a[21]] : [];
+          let t = '';
+          if (feel.includes(2)) t += 'Dass eine Senkung bereits ärztlich festgestellt wurde, gibt uns eine klare Grundlage. Gezieltes Beckenbodentraining ist die wirksamste konservative Maßnahme – und kann in vielen Fällen eine Operation deutlich hinauszögern oder vermeiden. ';
+          else if (feel.includes(1)) t += 'Regelmäßiges Fremdkörpergefühl ist ein eindeutiges Signal – frühzeitiges, gezieltes Handeln hat hier die besten Langzeitergebnisse. ';
+          else t += 'Das gelegentliche Druckgefühl nach einem langen Tag ist ein Frühzeichen, das ernst genommen werden sollte – und mit dem richtigen Training gut beeinflussbar ist. ';
+          if (chg.includes(1)) t += 'Dass es sich verschlechtert, ist ein klares Signal zu handeln. ';
+          if (q12.includes(2)) t += 'Nach einer Vaginalgeburt mit merklichen Veränderungen ist Organsenkung besonders häufig – und gezieltes Training besonders wirkungsvoll. ';
+          if (q21.includes(1)) t += 'Nach einer Gebärmutter-OP verändert sich das innere Gleichgewicht im Becken – gezieltes Training stellt die Stabilität wieder her. ';
+          if (q20.includes(3)) t += 'In der Postmenopause verliert das Bindegewebe an Stützwirkung – strukturiertes Training kompensiert das sehr gut. ';
+          t += 'Beckenbodentraining kann Senkungsbeschwerden deutlich lindern und das Fortschreiten effektiv bremsen – klinisch gut belegt.';
           return t;
         }
       },
       5: {
         icon:'✨', title:'Prävention & Vorsorge',
-        intro:'Wer vorsorgt, bevor Beschwerden entstehen, hat den besten Ausgangspunkt. Der Beckenboden profitiert enorm von frühzeitigem gezieltem Training.',
+        intro:'Wer vorsorgt, bevor Beschwerden entstehen, hat den besten Ausgangspunkt. Der Beckenboden profitiert enorm von frühzeitigem Training.',
         body(a) {
           const mot = a[11] ? [...a[11]] : [];
           let t = '';
-          if (mot.includes(1)) t += 'Gerade nach einer Schwangerschaft verändert sich das Beckenbodengefüge – gezielte Übungen helfen, es nachhaltig zu stärken. ';
-          t += 'Vorsorge zum richtigen Zeitpunkt ist die effektivste Form der Gesundheitsförderung. Wir freuen uns, Sie dabei zu begleiten.';
+          if (mot.includes(1)) t += 'Gerade nach einer Schwangerschaft verändert sich das gesamte Beckenbodengefüge. Gezieltes Aufbautraining jetzt legt das Fundament für Jahrzehnte. ';
+          if (mot.includes(0)) t += 'Langfristig gesund und beschwerdefrei bleiben – der Beckenboden ist dabei einer der wichtigsten und am meisten unterschätzten Schlüsselmuskeln. ';
+          t += 'Vorsorge zum richtigen Zeitpunkt ist die effektivste Form der Gesundheitsförderung. Wir begleiten Sie dabei.';
           return t;
         }
       }
@@ -1585,6 +1639,16 @@ const BB = {
       </div>`;
     }
 
+    // Verbindungs-Karte (nur bei mehreren Themen)
+    let verbindungCard = '';
+    if (topics.filter(t => TOPIC_DATA[t]).length >= 2) {
+      const names = topics.filter(t => TOPIC_DATA[t]).map(t => TOPIC_DATA[t].title.split(' ')[0]);
+      verbindungCard = `<div class="res-card res-card-link">
+        <div class="res-card-top"><span class="res-card-icon">🔗</span><span class="res-card-title">Der gemeinsame Nenner</span></div>
+        <div class="res-card-body">Was auf den ersten Blick verschiedene Themen sind – ${names.join(', ')} – hat eine gemeinsame Wurzel: der Beckenboden als zentrales Fundament des Körpers. Was gut für den Beckenboden ist, verbessert alle diese Bereiche gleichzeitig. Das macht gezieltes Training so effektiv.</div>
+      </div>`;
+    }
+
     let scaleHtml = '';
     if (scale) {
       const scaleLabel = scale <= 3 ? 'Wenig belastend' : scale <= 6 ? 'Spürbar belastend' : 'Stark belastend';
@@ -1596,53 +1660,73 @@ const BB = {
       </div>`;
     }
 
-    // Alltags-Karte (aus Q17/Q18/Q19)
+    // Alltags-Karte
     const q17 = a[17] ? [...a[17]] : [];
     const q18 = a[18] ? [...a[18]] : [];
     const q19 = a[19] ? [...a[19]] : [];
-    let alltag = '';
-    if (q17.includes(4)) alltag += 'Schmerzen beim Intimverkehr deuten auf eine erhöhte Muskelspannung im Beckenboden hin – das lässt sich gezielt und behutsam angehen. ';
-    else if (q17.includes(3)) alltag += 'Schmerzen ohne klaren Auslöser sind ein Hinweis auf eine muskuläre Dauerbelastung – ein häufiges, gut behandelbares Muster. ';
-    if (q18.filter(i => i !== 4).length >= 2) alltag += 'Dass mehrere Lebensbereiche eingeschränkt sind, zeigt, wie weit das Thema reicht – und wie viel sich durch gezieltes Handeln zurückgewinnen lässt. ';
-    if (q19.includes(3)) alltag += 'Erschöpfung und Energieverlust sind oft ein Zeichen, wie viel Kraft die Gesamtsituation kostet. Das nehmen wir ernst.';
-    else if (q19.includes(2)) alltag += 'Stress verstärkt Beckenbodensymptome spürbar – beides lässt sich gemeinsam regulieren.';
-    if (!alltag) alltag = 'Ihre Beschwerden zeigen sich noch in einem frühen Stadium – der beste Zeitpunkt, um gezielt zu handeln.';
-    const alltakCard = `<div class="res-card">
-      <div class="res-card-top"><span class="res-card-icon">🗓️</span><span class="res-card-title">Ihr Alltag</span></div>
-      <div class="res-card-body">${alltag}</div>
+    let alltagParts = [];
+    if (q17.length > 0 && !q17.every(i => i === 0)) {
+      if (q17.includes(4)) alltagParts.push('Schmerzen beim Intimverkehr oder bei gynäkologischen Untersuchungen deuten auf eine erhöhte Beckenbodenspannung hin – dieser Bereich wird besonders behutsam angegangen.');
+      else if (q17.includes(3)) alltagParts.push('Schmerzen im Alltag ohne klaren Auslöser sind ein Hinweis auf muskuläre Dauerspannung – ein bekanntes, gut behandelbares Muster.');
+      else alltagParts.push('Belastungsabhängige Schmerzen im Beckenbereich haben häufig eine muskuläre Ursache, die sich gezielt ansprechen lässt.');
+    }
+    const restrict = q18.filter(i => i !== 4);
+    if (restrict.length >= 2) alltagParts.push('Dass mehrere Lebensbereiche eingeschränkt sind, zeigt, wie weit das Thema reicht – und wie viel sich durch gezieltes Handeln zurückgewinnen lässt.');
+    else if (restrict.includes(3)) alltagParts.push('Intimitat durch Beschwerden eingeschrankt zu erleben ist besonders belastend. Das nehmen wir mit besonderer Sorgfalt wahr.');
+    else if (restrict.includes(1)) alltagParts.push('Spontane soziale Situationen zu meiden ist eine unterschätzte Einschränkung – und eine der ersten, die sich mit gezieltem Training auflöst.');
+    else if (restrict.includes(0)) alltagParts.push('Körperliche Aktivität einzuschränken kostet Lebensqualität, Energie und Selbstvertrauen.');
+    if (q19.includes(3)) alltagParts.push('Die Erschöpfung zeigt: Die Gesamtsituation kostet mehr Kraft, als man von außen sieht. Das nehmen wir ernst.');
+    else if (q19.includes(1)) alltagParts.push('Nächtlicher Harndrang, der den Schlaf unterbricht, beeinflusst Erholung, Stimmung und Tagesenergie – mehr als oft wahrgenommen.');
+    else if (q19.includes(2)) alltagParts.push('Stress und Beckenbodensymptome verstärken sich gegenseitig. Dieser Kreislauf lässt sich mit dem richtigen Ansatz gezielt durchbrechen.');
+    if (alltagParts.length === 0) {
+      if (!scale || scale <= 3) alltagParts.push('Ihre Beschwerden sind noch in einem frühen Stadium – der ideale Zeitpunkt, um gezielt zu handeln, bevor sie sich weiter festigen.');
+      else if (scale <= 6) alltagParts.push('Bei einem Belastungswert von ' + scale + '/10 sind Ihre Beschwerden spürbar im Alltag verankert. Jetzt gezielt zu handeln zahlt sich aus.');
+      else alltagParts.push('Ein Belastungswert von ' + scale + '/10 zeigt: Das Thema nimmt bedeutend Raum in Ihrem Leben ein. Umso mehr lohnt es sich, jetzt strukturiert zu handeln.');
+    }
+    const alltagCard = `<div class="res-card">
+      <div class="res-card-top"><span class="res-card-icon">📅</span><span class="res-card-title">Ihr Alltag</span></div>
+      <div class="res-card-body">${alltagParts.join(' ')}</div>
     </div>`;
 
-    // Kontext-Karte (aus Q20/Q21/Q12)
+    // Kontext-Karte (nur wenn echte Daten vorhanden)
     const q20 = a[20] ? [...a[20]] : [];
     const q21 = a[21] ? [...a[21]] : [];
     const q12 = a[12] ? [...a[12]] : [];
     let kontext = '';
-    if (q21.includes(3)) kontext += 'Endometriose verändert das gesamte Becken-Milieu. Unser Ansatz berücksichtigt das – behutsam und spezialisiert. ';
-    if (q20.includes(3)) kontext += 'In der Postmenopause reagiert der Beckenboden auf gezielte Reize besonders gut – strukturiertes Training zeigt hier deutliche Effekte. ';
-    else if (q20.includes(2)) kontext += 'In der Perimenopause verändert sich das Bindegewebe. Gezieltes Training kann diesen Prozess spürbar abfedern. ';
-    if (q12.includes(2)) kontext += 'Nach einer Vaginalgeburt mit merklichen Veränderungen ist gezieltes Aufbautraining besonders wirksam. ';
-    if (q21.includes(4)) kontext += 'Eine chronische Erkrankung erfordert einen besonders behutsamen, angepassten Ansatz – das berücksichtigen wir. ';
-    if (!kontext) kontext = 'Ihre persönliche Geschichte fließt vollständig in Ihre Einschätzung ein – für einen Ansatz, der wirklich auf Sie passt.';
-    const kontextCard = `<div class="res-card">
-      <div class="res-card-top"><span class="res-card-icon">🔍</span><span class="res-card-title">Ihre Situation</span></div>
-      <div class="res-card-body">${kontext}</div>
-    </div>`;
+    if (q21.includes(3)) kontext += 'Endometriose verändert das gesamte Becken-Milieu. Unser Ansatz berücksichtigt das ausdrücklich – behutsam und spezialisiert. ';
+    if (q20.includes(3)) kontext += 'In der Postmenopause reagiert der Beckenboden auf gezielte Reize besonders gut – strukturiertes Training zeigt hier deutliche, nachhaltige Effekte. ';
+    else if (q20.includes(2)) kontext += 'In der Perimenopause verändert sich das Bindegewebe spürbar. Gezieltes Training federt diesen Prozess sehr gut ab. ';
+    else if (q20.includes(1)) kontext += 'Schwangerschaft und die Phase danach fordern den Beckenboden enorm – gezieltes Aufbautraining jetzt legt das Fundament für die nächsten Jahrzehnte. ';
+    if (q12.includes(2)) kontext += 'Nach einer Vaginalgeburt mit merklichen Veränderungen ist gezieltes Aufbautraining nicht nur sinnvoll, sondern besonders wirkungsvoll. ';
+    if (q21.includes(1)) kontext += 'Nach einer Gebärmutter-OP verändert sich das innere Gleichgewicht im Becken – gezieltes Training stellt die Stabilität wieder her. ';
+    if (q21.includes(2)) kontext += 'Nach einer Blasen- oder Nieren-OP ist der Beckenboden oft mitbetroffen – ein sanfter, gezielter Ansatz ist hier besonders wichtig. ';
+    if (q21.includes(4)) kontext += 'Eine chronische Erkrankung erfordert einen besonders behutsamen, angepassten Ansatz – das berücksichtigen wir in der gesamten Planung. ';
+    const kontextCard = kontext ? `<div class="res-card">
+      <div class="res-card-top"><span class="res-card-icon">🔍</span><span class="res-card-title">Ihre persönliche Ausgangslage</span></div>
+      <div class="res-card-body">${kontext.trim()}</div>
+    </div>` : '';
+
+    // Massnahmen-Karte
+    let massnahmenText = '';
+    if (q13val === 2) massnahmenText = 'Sie haben bereits mehreres versucht – und es hat nicht dauerhaft geholfen. Das hat einen konkreten Grund: Klassische Übungen erreichen hauptsächlich die äußere Muskelschicht. Die tiefe Beckenbodenmuskulatur lässt sich mit bewusstem Training allein kaum aktivieren. Genau da liegt der Unterschied.';
+    else if (q13val === 1) massnahmenText = 'Dass Sie bereits mit Übungen oder Physiotherapie begonnen haben, ist ein guter Start. Der nächste Schritt geht tiefer – in die Muskelschicht, die mit bewusstem Training nicht erreichbar ist.';
+    const massnahmenCard = massnahmenText ? `<div class="res-card">
+      <div class="res-card-top"><span class="res-card-icon">📋</span><span class="res-card-title">Was Sie bisher versucht haben</span></div>
+      <div class="res-card-body">${massnahmenText}</div>
+    </div>` : '';
 
     const greeting = name ? `${name}, wir haben` : 'Wir haben';
 
     return `<div class="step-card">
       <span class="res-tag">Ihre persönliche Einschätzung</span>
       <div class="res-hl">${introHl}</div>
-      <div class="res-sub">${greeting} auf Basis Ihrer Antworten eine erste Einschätzung für Sie erstellt.</div>
+      <div class="res-sub">${greeting} auf Basis Ihrer Antworten eine persönliche Einschätzung für Sie erstellt.</div>
       ${scaleHtml}
-      <div class="res-cards">${topicCards}${alltakCard}${kontextCard}</div>
-      <div class="pelvi-why-card">
-        <div class="pelvi-why-hl">Warum PelviPower?</div>
-        <div class="pelvi-why-body">Wenn wir selbst versuchen zu trainieren, spannen wir hauptsächlich die äußeren Schließmuskeln an – die tiefe Beckenbodenmuskulatur, die für all unsere Funktionen wirklich gebraucht wird, können wir nicht bewusst ansteuern. Genau hier setzt PelviPower an: Durch gezielte Magnetfeldimpulse werden die Nervenzellen direkt im Muskel aktiviert und alle wichtigen Muskelgruppen erreicht und gestärkt. Gleichzeitig lernt das Gehirn wieder, diese eingeschlafenen Muskelzellen zu benutzen. Mit jeder Sitzung wird mehr Kraft zurückgebracht – bis alles wieder automatisch und zuverlässig arbeitet.</div>
-      </div>
+      <div class="res-cards">${topicCards}${verbindungCard}${alltagCard}${kontextCard}${massnahmenCard}</div>
       <button class="btn-res-cta" onclick="BB.close()">Kostenloses Erstgespräch vereinbaren →</button>
       <div class="res-disclaimer">Diese Einschätzung ersetzt keine medizinische Diagnose. Für eine genaue Abklärung empfehlen wir ein persönliches Gespräch.</div>
     </div>`;
+  }
   },
 
   // ── Männer: Ergebnisseite (unverändert) ──
