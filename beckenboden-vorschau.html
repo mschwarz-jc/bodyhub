@@ -233,7 +233,8 @@
     }
     .btn-p {
       display: flex; align-items: center; justify-content: center; gap: 9px;
-      width: 100%; padding: 16px 28px; border-radius: 100px; border: none; cursor: pointer;
+      width: 100%; max-width: 320px; margin-left: auto; margin-right: auto;
+      padding: 16px 28px; border-radius: 100px; border: none; cursor: pointer;
       font-size: 15px; font-family: inherit; font-weight: 600;
       background: var(--ac); color: #fff; transition: background 0.22s;
     }
@@ -885,9 +886,9 @@ const BB_QS = {
       context: 'Darm und Beckenboden teilen dieselben Muskeln und Nerven – beides hängt enger zusammen als die meisten denken.',
       opts: ['Keine Probleme', 'Häufige Verstopfung oder starkes Pressen', 'Manchmal plötzlicher, kaum aufschiebbarer Stuhldrang', 'Gelegentlicher unkontrollierter Stuhlverlust'], multi: true },
     // Q17 Bereich 2 – Schmerzen
-    { text: 'Haben Sie Schmerzen oder Druckgefühle im Becken- oder Unterbauchbereich?',
-      context: 'Schmerzen im Beckenbereich haben häufig eine muskuläre Ursache – und sind gut angehbar.',
-      opts: ['Keine', 'Beim langen Sitzen oder Stehen', 'Nach Sport oder körperlicher Belastung', 'Im Alltag ohne klaren Auslöser', 'Beim Intimverkehr oder bei gynäkologischen Untersuchungen'], multi: true },
+    { text: 'Spüren Sie manchmal Schmerzen oder ein Druckgefühl im Unterbauch oder Beckenbereich?',
+      context: 'Schmerzen in diesem Bereich haben häufig eine muskuläre Ursache – und sind gut angehbar.',
+      opts: ['Nein, nicht wirklich', 'Beim langen Sitzen oder Stehen', 'Nach Sport oder körperlicher Belastung', 'Im Alltag ohne klaren Auslöser', 'Beim Intimverkehr oder bei gynäkologischen Untersuchungen'], multi: true },
     // Q18 Bereich 2 – Alltagseinschränkung
     { text: 'Was schränkt Sie durch Ihre Beschwerden ein?',
       opts: ['Sport und körperliche Aktivitäten', 'Spontane soziale Situationen', 'Reisen oder längere Unternehmungen', 'Intimität und Partnerschaft', 'Ich lasse mich (noch) nicht einschränken'], multi: true },
@@ -955,7 +956,7 @@ const W_NUDGES = {
   hv: { icon:'💦', text:'Harnverlust ist das häufigste Beckenboden-Thema bei Frauen überhaupt. Und: In den meisten Fällen lässt er sich ohne Operation deutlich verbessern oder ganz beheben.' },
   ru: { icon:'🌿', text:'Rücken und Beckenboden teilen dieselbe tiefe Muskelgruppe. Was für den Beckenboden gut ist, hilft fast immer auch dem Rücken – beides lässt sich gemeinsam angehen.' },
   sx: { icon:'🌸', text:'Das ist nicht selbstverständlich – danke für Ihre Offenheit. Viele Frauen berichten von genau diesen Veränderungen, sprechen aber nicht darüber. Sie sind damit nicht allein.' },
-  og: { icon:'💪', text:'Organsenkung klingt beängstigend – ist es aber nicht. Gezieltes Beckenbodentraining ist hier eine der wirksamsten Maßnahmen, die es gibt. Viele Frauen spüren Verbesserungen schon nach wenigen Wochen.' },
+  og: { icon:'🪷', text:'Organsenkung klingt beängstigend – ist es aber nicht. Gezieltes Beckenbodentraining ist hier eine der wirksamsten Maßnahmen, die es gibt. Viele Frauen spüren Verbesserungen schon nach wenigen Wochen.' },
   vs: { icon:'✨', text:'Wer vorsorgt, bevor Beschwerden entstehen, hat die allerbesten Voraussetzungen. Das machen wenige – Sie gehören dazu.' },
   b2a: { icon:'🌿', text:'Darm, Blase und Beckenboden teilen sich dieselben Muskeln und Nerven. Kein Zufall, dass sie sich gegenseitig beeinflussen – und kein Zufall, dass man alle drei gemeinsam angehen kann.' },
   b2b: { icon:'💙', text:'Wir haben schon viele Frauen in einer sehr ähnlichen Situation begleitet. Was Sie beschreiben, ergibt ein klares, gut bekanntes Muster – gleich sehen Sie, was das für Sie bedeutet.' },
@@ -972,7 +973,7 @@ const W_TOPIC_META = {
   1: { icon:'💦', name:'Harnverlust',  sub:'Ungewollter Urinverlust – ein paar gezielte Fragen, damit wir das besser einschätzen können.' },
   2: { icon:'🌿', name:'Rücken',       sub:'Rücken und Beckenboden teilen dieselbe Muskelgruppe – kurze Fragen dazu.' },
   3: { icon:'🌸', name:'Sexualität',   sub:'Veränderungen in diesem Bereich – ein paar Fragen, damit wir Ihre Situation besser verstehen.' },
-  4: { icon:'💪', name:'Organsenkung', sub:'Druck- oder Fremdkörpergefühl nach unten – ein paar kurze Fragen dazu.' },
+  4: { icon:'🪷', name:'Organsenkung', sub:'Druck- oder Fremdkörpergefühl nach unten – ein paar kurze Fragen dazu.' },
 };
 
 function buildWFlow(topics, extraTopics = []) {
