@@ -462,6 +462,9 @@
     .res-scale-bar { height: 100%; border-radius: 3px; }
     .res-scale-val { font-size: 13px; font-weight: 600; }
     .res-disclaimer { font-size: 11px; color: var(--txl); margin-top: 14px; text-align: center; font-style: italic; line-height: 1.55; padding: 0 4px; }
+    .pelvi-why-card { background: var(--acxl); border: 1.5px solid var(--acl); border-radius: 14px; padding: 18px 16px; margin-bottom: 16px; }
+    .pelvi-why-hl { font-size: 14px; font-weight: 700; color: var(--ac); margin-bottom: 8px; }
+    .pelvi-why-body { font-size: 13.5px; color: var(--txl); line-height: 1.65; }
 
     /* ── NUDGE KARTE ── */
     .nudge-card { background: var(--acxl); border: 1.5px solid var(--acl); border-radius: 16px; padding: 28px 22px; text-align: center; cursor: pointer; animation: fadeUp 0.24s ease; }
@@ -1633,6 +1636,10 @@ const BB = {
       <div class="res-sub">${greeting} auf Basis Ihrer Antworten eine erste Einschätzung für Sie erstellt.</div>
       ${scaleHtml}
       <div class="res-cards">${topicCards}${alltakCard}${kontextCard}</div>
+      <div class="pelvi-why-card">
+        <div class="pelvi-why-hl">Warum PelviPower?</div>
+        <div class="pelvi-why-body">PelviPower trainiert den Beckenboden mit hochintensiver fokussierter Elektromagnetstimulation – also von innen heraus, ohne aktive Anstrengung. Die Technologie erreicht die tiefen Muskelschichten, die mit bewusstem Training kaum aktiviert werden können. Das macht sie besonders wirksam bei den Themen, die in Ihrer Einschätzung aufgetaucht sind.</div>
+      </div>
       <button class="btn-res-cta" onclick="BB.close()">Kostenloses Erstgespräch vereinbaren →</button>
       <div class="res-disclaimer">Diese Einschätzung ersetzt keine medizinische Diagnose. Für eine genaue Abklärung empfehlen wir ein persönliches Gespräch.</div>
     </div>`;
